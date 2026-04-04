@@ -175,7 +175,7 @@ export default function ExercisePage() {
                 <pre className="bg-gray-50 rounded-lg p-4 border border-gray-200 overflow-x-auto whitespace-pre-wrap">{testCode}</pre>
               </div>
             )}
-            {activeTab === 'results' && <TestResults />}
+            {activeTab === 'results' && <TestResults running={submitting} message={submitResult?.message} />}
           </div>
         </div>
       </div>
