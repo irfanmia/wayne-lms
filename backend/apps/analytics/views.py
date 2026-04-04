@@ -137,17 +137,22 @@ class AdminChartDataView(APIView):
             for c in top_courses_qs
         ]
 
-        # Completion rate by category
-        from apps.courses.models import Category
-        categories = Category.objects.all()
+        # Completion rate by category (category is a CharField on Course)
+        categories = (
+            Course.objects.values_list('category', flat=True)
+            .distinct()
+            .order_by('category')
+        )
         completion_rates = []
         colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500']
-        for i, cat in enumerate(categories[:5]):
+        for i, cat in enumerate(list(categories)[:5]):
+            if not cat:
+                continue
             total_enroll = Enrollment.objects.filter(course__category=cat).count()
             completed = Enrollment.objects.filter(course__category=cat, completed_at__isnull=False).count()
             rate = round(completed / total_enroll * 100) if total_enroll else 0
             completion_rates.append({
-                'cat': cat.name, 'rate': rate, 'color': colors[i % len(colors)]
+                'cat': cat, 'rate': rate, 'color': colors[i % len(colors)]
             })
 
         return Response({
