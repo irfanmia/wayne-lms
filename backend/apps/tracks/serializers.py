@@ -3,13 +3,14 @@ from .models import Track, Concept, Exercise
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
+    concept = serializers.CharField(source='concept.slug', read_only=True)
     trackSlug = serializers.CharField(source='concept.track.slug', read_only=True)
     name = serializers.SerializerMethodField()
     difficultyKey = serializers.CharField(source='difficulty', read_only=True)
 
     class Meta:
         model = Exercise
-        fields = ('id', 'slug', 'title', 'name', 'description', 'difficulty', 'difficultyKey',
+        fields = ('id', 'slug', 'title', 'name', 'description', 'difficulty', 'difficultyKey', 'concept',
                   'instructions', 'starter_code', 'test_code', 'solution', 'order', 'trackSlug')
 
     def get_name(self, obj):

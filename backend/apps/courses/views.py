@@ -73,6 +73,24 @@ class CourseViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Already enrolled', 'enrolled': True})
         return Response({'detail': 'Enrolled successfully', 'enrolled': True}, status=status.HTTP_201_CREATED)
 
+
+    @action(detail=False, methods=["get"], url_path="enrolled")
+    def enrolled(self, request):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        enrolled_course_ids = Enrollment.objects.filter(user=request.user).values_list("course_id", flat=True)
+        courses = Course.objects.filter(id__in=enrolled_course_ids, status="published")
+        serializer = CourseListSerializer(courses, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="my-courses")
+    def my_courses(self, request):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        enrolled_course_ids = Enrollment.objects.filter(user=request.user).values_list("course_id", flat=True)
+        courses = Course.objects.filter(id__in=enrolled_course_ids, status="published")
+        serializer = CourseListSerializer(courses, many=True, context={"request": request})
+        return Response(serializer.data)
     @action(detail=True, methods=['get', 'put'], url_path='prerequisites')
     def prerequisites(self, request, slug=None):
         course = self.get_object()
