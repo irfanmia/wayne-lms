@@ -44,6 +44,7 @@ export default function OptionsEditor() {
   const [moneyBack, setMoneyBack] = useState(true);
   const [moneyBackDays, setMoneyBackDays] = useState('30');
   const [giftable, setGiftable] = useState(true);
+  const [enablePractice, setEnablePractice] = useState(false);
 
   // Load existing course options
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function OptionsEditor() {
       if (courseData.money_back_guarantee !== undefined) setMoneyBack(courseData.money_back_guarantee);
       if (courseData.money_back_days !== undefined) setMoneyBackDays(String(courseData.money_back_days));
       if (courseData.giftable !== undefined) setGiftable(courseData.giftable);
+      if (courseData.enable_practice !== undefined) setEnablePractice(courseData.enable_practice);
     }
   }, [courseData]);
 
@@ -67,6 +69,7 @@ export default function OptionsEditor() {
         money_back_guarantee: moneyBack,
         money_back_days: parseInt(moneyBackDays) || 30,
         giftable,
+        enable_practice: enablePractice,
       });
       setFeedback({ type: 'success', message: 'Options saved successfully!' });
     } catch (err: unknown) {
@@ -142,6 +145,11 @@ export default function OptionsEditor() {
               <span className="text-sm text-gray-500">day guarantee</span>
             </div>
           )}
+        </div>
+
+        {/* Practice Exercises */}
+        <div className="bg-white border border-gray-200 rounded-xl p-5">
+          <Toggle checked={enablePractice} onChange={setEnablePractice} label="🏋️ Practice Exercises" desc="Enable hands-on coding exercises for this course" />
         </div>
 
         {/* Gift */}

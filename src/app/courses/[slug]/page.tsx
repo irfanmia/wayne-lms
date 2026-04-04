@@ -15,7 +15,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   const { slug } = use(params);
   const { t, locale } = useI18n();
   const { isAuthenticated, isDemoMode } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'reviews' | 'live'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'practice' | 'curriculum' | 'reviews' | 'live'>('overview');
   const [expandedModules, setExpandedModules] = useState<number[]>([0]);
   const [enrolling, setEnrolling] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
@@ -174,6 +174,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
     curriculum: t('courseDetail.curriculum'),
     reviews: t('courseDetail.reviews'),
     live: '📡 Live Classes',
+    practice: '🏋️ Practice',
   };
 
   const toggleModule = (i: number) => {
@@ -216,7 +217,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
           <div className="flex-1 min-w-0">
             {/* Tabs */}
             <div className="flex gap-1 border-b border-gray-200 mb-8">
-              {(['overview', 'curriculum', 'live', 'reviews'] as const).map(tab => (
+              {(['overview', 'curriculum', 'live', ...(course.enable_practice ? ['practice'] : []), 'reviews'] as const).map(tab => (
                 <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 py-3 text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${activeTab === tab ? 'text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700'}`}>
                   {tabLabels[tab]}
                   {tab === 'live' && liveClasses.filter(lc => lc.status === 'live').length > 0 && (
@@ -354,7 +355,19 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
               </div>
             )}
 
-            {activeTab === 'reviews' && (
+            
+                {activeTab === 'practice' && course.enable_practice && (
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">Practice Exercises</h2>
+                    <p className="text-gray-500 mb-6">Hands-on exercises to reinforce what you learned in this course.</p>
+                    <div className="bg-orange-50 border border-orange-200 rounded-xl p-6 text-center">
+                      <span className="text-3xl mb-2 block">🏋️</span>
+                      <p className="text-gray-600">Practice exercises coming soon for this course.</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'reviews' && (
               <div className="space-y-6">
                 {[
                   { name: 'Ahmed K.', rating: 5, text: locale === 'ar' ? 'دورة ممتازة! المنهج منظم جيداً والتمارين عملية.' : locale === 'es' ? '¡Excelente curso! El programa está bien estructurado y los ejercicios son prácticos.' : 'Excellent course! The curriculum is well-structured and the exercises are practical.', date: locale === 'ar' ? 'منذ أسبوعين' : locale === 'es' ? 'hace 2 semanas' : '2 weeks ago' },

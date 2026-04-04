@@ -86,7 +86,7 @@ class CourseCreateUpdateSerializer(serializers.ModelSerializer):
                   'is_free', 'thumbnail', 'duration', 'is_featured', 'status',
                   'enable_certificates', 'enable_discussions', 'enable_drip',
                   'enable_points', 'enable_quizzes', 'enable_prerequisites',
-                  'enable_assignments', 'enable_multi_instructor',
+                  'enable_assignments', 'enable_practice', 'enable_multi_instructor',
                   'what_youll_learn', 'who_should_take', 'layout_template']
         extra_kwargs = {
             'slug': {'required': False},

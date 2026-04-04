@@ -35,6 +35,7 @@ class Course(models.Model):
     enable_quizzes = models.BooleanField(default=True)
     enable_prerequisites = models.BooleanField(default=False)
     enable_assignments = models.BooleanField(default=False)
+    enable_practice = models.BooleanField(default=False, help_text="Enable practice exercises section for this course")
     enable_multi_instructor = models.BooleanField(default=False)
 
     # Layout & gifting
