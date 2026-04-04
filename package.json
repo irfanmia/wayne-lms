@@ -1,0 +1,47 @@
+{
+  "name": "wayne-lms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@blockly/block-plus-minus": "^9.0.9",
+    "@blockly/block-shareable-procedures": "^6.0.10",
+    "@blockly/continuous-toolbox": "^7.0.8",
+    "@blockly/field-angle": "^6.0.8",
+    "@blockly/field-bitmap": "^6.0.8",
+    "@blockly/field-colour": "^6.0.11",
+    "@blockly/field-date": "^10.0.8",
+    "@blockly/field-dependent-dropdown": "^5.0.9",
+    "@blockly/field-grid-dropdown": "^6.0.9",
+    "@blockly/field-multilineinput": "^6.0.8",
+    "@blockly/field-slider": "^8.0.8",
+    "@blockly/keyboard-navigation": "^3.0.3",
+    "@blockly/plugin-cross-tab-copy-paste": "^8.0.7",
+    "@blockly/plugin-modal": "^8.0.8",
+    "@blockly/plugin-scroll-options": "^7.0.8",
+    "@blockly/plugin-workspace-search": "^10.1.7",
+    "@blockly/shadow-block-converter": "^7.0.9",
+    "@blockly/theme-modern": "^7.0.4",
+    "@blockly/toolbox-search": "^3.1.8",
+    "@blockly/zoom-to-fit": "^7.0.8",
+    "blockly": "^12.4.1",
+    "framer-motion": "^12.34.3",
+    "next": "16.1.6",
+    "next-auth": "^4.24.13",
+    "pixi.js": "^8.16.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wayne LMS LMS — Platform Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --orange: #F97316;
+    --orange-light: #FFF7ED;
+    --orange-dark: #EA580C;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--gray-800);
+    background: #fff;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; color: var(--gray-900); }
+
+  /* Print styles */
+  @media print {
+    body { font-size: 12px; line-height: 1.5; }
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    section { page-break-inside: avoid; }
+    .cover { page-break-after: always; }
+    table { font-size: 11px; }
+    a { color: var(--gray-800) !important; text-decoration: none !important; }
+  }
+
+  /* Cover */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, var(--gray-900) 0%, #1a1a2e 100%);
+    color: #fff;
+    padding: 60px 40px;
+  }
+  .cover .logo {
+    font-family: 'Manrope', sans-serif;
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .cover .logo span { color: var(--orange); }
+  .cover .subtitle {
+    font-size: 22px;
+    color: var(--gray-300);
+    margin-top: 12px;
+    font-weight: 300;
+  }
+  .cover .divider {
+    width: 80px;
+    height: 4px;
+    background: var(--orange);
+    border-radius: 2px;
+    margin: 40px auto;
+  }
+  .cover .meta {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-top: 40px;
+    line-height: 2;
+  }
+
+  /* Container */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 36px 40px;
+    margin-bottom: 50px;
+  }
+  .toc h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: var(--orange);
+  }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc > ol > li {
+    counter-increment: toc;
+    margin-bottom: 8px;
+  }
+  .toc > ol > li::before {
+    content: counter(toc) ".";
+    color: var(--orange);
+    font-weight: 700;
+    margin-right: 10px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .toc a {
+    color: var(--gray-700);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .toc a:hover { color: var(--orange); }
+
+  /* Sections */
+  section { margin-bottom: 50px; }
+  section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section h2 .num {
+    background: var(--orange);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: var(--orange-dark);
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+  }
+  thead th {
+    background: var(--gray-900);
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  tbody tr:nth-child(even) { background: var(--gray-50); }
+  tbody tr:hover { background: var(--orange-light); }
+
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-done { background: #DEF7EC; color: #03543F; }
+  .badge-progress { background: #FEF3C7; color: #92400E; }
+  .badge-planned { background: #E0E7FF; color: #3730A3; }
+
+  /* Summary boxes */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .summary-card {
+    background: var(--orange-light);
+    border: 1px solid #FDBA74;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .summary-card .number {
+    font-family: 'Manrope', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--orange);
+  }
+  .summary-card .label {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  ul { margin: 8px 0 16px 20px; }
+  li { margin-bottom: 6px; }
+
+  .arch-box {
+    background: var(--gray-900);
+    color: #E5E7EB;
+    border-radius: 10px;
+    padding: 28px 32px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 20px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .feature-group {
+    background: var(--gray-50);
+    border-left: 4px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+  .feature-group h4 {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray-500);
+    font-size: 13px;
+    border-top: 1px solid var(--gray-200);
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="logo">million<span>coders</span></div>
+  <div class="subtitle">Learning Management System — Platform Report</div>
+  <div class="divider"></div>
+  <p style="font-size:16px; max-width:600px; color:#9CA3AF;">A modern, full-stack LMS built for the Middle East market — empowering developers through interactive courses, coding exercises, and gamified learning.</p>
+  <div class="meta">
+    Version 1.0 &nbsp;•&nbsp; March 2026<br>
+    Confidential — Internal Document
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#s1">Executive Summary</a></li>
+      <li><a href="#s2">Tech Stack</a></li>
+      <li><a href="#s3">System Architecture</a></li>
+      <li><a href="#s4">Features Completed</a></li>
+      <li><a href="#s5">Features In Progress / Planned</a></li>
+      <li><a href="#s6">Database Overview</a></li>
+      <li><a href="#s7">API Surface</a></li>
+      <li><a href="#s8">Design System</a></li>
+      <li><a href="#s9">Deployment &amp; Infrastructure</a></li>
+    </ol>
+  </nav>
+
+  <!-- SUMMARY CARDS -->
+  <div class="summary-grid">
+    <div class="summary-card"><div class="number">10</div><div class="label">Published Courses</div></div>
+    <div class="summary-card"><div class="number">94+</div><div class="label">Lessons</div></div>
+    <div class="summary-card"><div class="number">56</div><div class="label">Concepts</div></div>
+    <div class="summary-card"><div class="number">27+</div><div class="label">Exercises</div></div>
+    <div class="summary-card"><div class="number">100+</div><div class="label">API Endpoints</div></div>
+    <div class="summary-card"><div class="number">21</div><div class="label">Django Apps</div></div>
+    <div class="summary-card"><div class="number">29+</div><div class="label">Users</div></div>
+    <div class="summary-card"><div class="number">3</div><div class="label">Languages (i18n)</div></div>
+  </div>
+
+  <!-- 1. EXECUTIVE SUMMARY -->
+  <section id="s1" class="page-break">
+    <h2><span class="num">1</span> Executive Summary</h2>
+    <p><strong>Wayne LMS LMS</strong> is a modern, full-stack learning management system purpose-built for the Middle East and Dubai market. The platform targets aspiring and professional developers with a comprehensive suite of interactive courses, hands-on coding exercises, quizzes, assignments, and gamified learning experiences.</p>
+    <p><strong>Mission:</strong> To democratize coding education across the MENA region by delivering a world-class, Arabic-supported, mobile-first learning platform that rivals global competitors like Udemy, Coursera, and Exercism — while being locally relevant and culturally aware.</p>
+    <p>The platform is fully operational with 10 published courses, 12 coding tracks, a complete admin dashboard, and student-facing features including certificates, gamification, and multi-language support (English, Arabic RTL, Spanish).</p>
+  </section>
+
+  <!-- 2. TECH STACK -->
+  <section id="s2" class="page-break">
+    <h2><span class="num">2</span> Tech Stack</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Technology</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Frontend</strong></td><td>Next.js 16</td><td>React-based, deployed on Vercel</td></tr>
+        <tr><td><strong>Backend</strong></td><td>Django 5 + DRF</td><td>Django REST Framework, DigitalOcean droplet (BLR1)</td></tr>
+        <tr><td><strong>Database</strong></td><td>PostgreSQL</td><td>Relational DB with 21 app schemas</td></tr>
+        <tr><td><strong>Media Storage</strong></td><td>Cloudflare R2</td><td>Served via media.fiveniners.com</td></tr>
+        <tr><td><strong>Web Server</strong></td><td>Nginx → Gunicorn</td><td>Reverse proxy to WSGI</td></tr>
+        <tr><td><strong>Auth</strong></td><td>GitHub OAuth + JWT</td><td>NextAuth.js on frontend, JWT exchange with backend</td></tr>
+        <tr><td><strong>SSL</strong></td><td>Let's Encrypt + Cloudflare</td><td>Full (Strict) mode</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 3. ARCHITECTURE -->
+  <section id="s3" class="page-break">
+    <h2><span class="num">3</span> System Architecture</h2>
+    <div class="arch-box">┌─────────────────────────────────────────────────────────────────┐
+│                         USERS (Browser)                         │
+└──────────────┬──────────────────────────────┬───────────────────┘
+               │                              │
+               ▼                              ▼
+┌──────────────────────────┐   ┌──────────────────────────────┐
+│   wayne-lms      │   │   media.fiveniners.com       │
+│   .vercel.app            │   │   (Cloudflare R2)            │
+│                          │   │                              │
+│   Next.js 16 Frontend    │   │   Images, Videos, Files      │
+│   NextAuth.js            │   └──────────────────────────────┘
+└──────────────┬───────────┘
+               │ REST API calls
+               ▼
+┌──────────────────────────────────────────────────────────────┐
+│   api.wayne-lms.example.com                                      │
+│   DigitalOcean Droplet (BLR1 — Bangalore)                    │
+│                                                              │
+│   Nginx → Gunicorn → Django 5 + DRF                          │
+│   PostgreSQL  •  21 Django Apps  •  100+ Endpoints           │
+│   Ubuntu 24.04 • 2GB RAM • 1 vCPU • 70GB SSD                │
+└──────────────────────────────────────────────────────────────┘</div>
+
+    <h3>Django Apps (21)</h3>
+    <table>
+      <thead><tr><th>#</th><th>App</th><th>#</th><th>App</th><th>#</th><th>App</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>accounts</td><td>8</td><td>exercises</td><td>15</td><td>certificates</td></tr>
+        <tr><td>2</td><td>courses</td><td>9</td><td>tracks</td><td>16</td><td>gamification</td></tr>
+        <tr><td>3</td><td>lessons</td><td>10</td><td>concepts</td><td>17</td><td>coupons</td></tr>
+        <tr><td>4</td><td>curriculum</td><td>11</td><td>quizzes</td><td>18</td><td>bundles</td></tr>
+        <tr><td>5</td><td>enrollments</td><td>12</td><td>assignments</td><td>19</td><td>payments</td></tr>
+        <tr><td>6</td><td>progress</td><td>13</td><td>discussions</td><td>20</td><td>notifications</td></tr>
+        <tr><td>7</td><td>media</td><td>14</td><td>analytics</td><td>21</td><td>settings</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4. FEATURES COMPLETED -->
+  <section id="s4" class="page-break">
+    <h2><span class="num">4</span> Features Completed</h2>
+
+    <div class="feature-group">
+      <h4>✅ Course Management</h4>
+      <ul>
+        <li>10 published courses with full course builder</li>
+        <li>8-tab builder: Settings, Curriculum, Drip, Pricing, Coupons, Options, FAQ, Notice</li>
+        <li>MasterStudy LMS-matching UX and feature parity</li>
+        <li>Optional feature toggles: prerequisites, drip content, trial lessons, multi-instructor, groups, bundles, streams, slides</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Learning View</h4>
+      <ul>
+        <li>Text, video, and slides lesson types</li>
+        <li>Sticky bottom navigation bar</li>
+        <li>Discussion slide-in panel</li>
+        <li>Progress tracking with mark-complete toggle</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Practice Mode</h4>
+      <ul>
+        <li>12 coding tracks, 56 concepts, 27+ exercises</li>
+        <li>Concept map with auto-layout visualization</li>
+        <li>Integrated code editor</li>
+        <li>Dual-mode toggle: Learning ↔ Practice</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Quiz System</h4>
+      <ul>
+        <li>6 question types</li>
+        <li>3 phases: Intro → Taking → Results</li>
+        <li>Countdown timer with auto-submit</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Assignment System</h4>
+      <ul>
+        <li>5 types: essay, code, file upload, URL, mixed</li>
+        <li>Auto-grading via pytest for code assignments</li>
+        <li>Rubric-based grading, multi-attempt support</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Admin Dashboard</h4>
+      <p>12 fully functional pages connected to real APIs:</p>
+      <table>
+        <thead><tr><th>#</th><th>Page</th><th>#</th><th>Page</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Dashboard</td><td>7</td><td>Coupons</td></tr>
+          <tr><td>2</td><td>Courses</td><td>8</td><td>Bundles</td></tr>
+          <tr><td>3</td><td>Exercises</td><td>9</td><td>Certificates</td></tr>
+          <tr><td>4</td><td>Content Library</td><td>10</td><td>Payments</td></tr>
+          <tr><td>5</td><td>Users</td><td>11</td><td>Email Manager</td></tr>
+          <tr><td>6</td><td>Analytics</td><td>12</td><td>Platform Settings</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Student Dashboard</h4>
+      <ul>
+        <li>Enrolled courses view, progress tracking</li>
+        <li>Certificates, wishlist</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Authentication</h4>
+      <ul>
+        <li>GitHub OAuth → backend JWT exchange</li>
+        <li>Email/password login</li>
+        <li>Admin guard middleware</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Pricing Models (9)</h4>
+      <table>
+        <thead><tr><th>#</th><th>Model</th><th>#</th><th>Model</th><th>#</th><th>Model</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Free</td><td>4</td><td>Installment</td><td>7</td><td>Waitlist</td></tr>
+          <tr><td>2</td><td>One-time</td><td>5</td><td>Bundle</td><td>8</td><td>Scholarship</td></tr>
+          <tr><td>3</td><td>Membership</td><td>6</td><td>Pay What You Want</td><td>9</td><td>Offline/Institute</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Coupon System</h4>
+      <ul>
+        <li>Manual coupons + Smart coupons (Birthday, Welcome, Referral, Abandoned Cart)</li>
+        <li>Seasonal templates + bulk generation</li>
+      </ul>
+    </div>
+
+    <div class="feature-group">
+      <h4>✅ Additional Features</h4>
+      <table>
+        <thead><tr><th>Feature</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>Gamification</td><td>Points, badges (earned/unearned), leaderboard</td></tr>
+          <tr><td>Certificates</td><td>Auto-generated on completion, shareable</td></tr>
+          <tr><td>i18n</td><td>English (default), Arabic (RTL), Spanish</td></tr>
+          <tr><td>Media Storage</td><td>Cloudflare R2 — course images & files upload</td></tr>
+          <tr><td>Security</td><td>Env-based secrets, security headers, HTTPS, Cloudflare Full Strict</td></tr>
+          <tr><td>Responsive</td><td>Mobile / tablet / desktop, iPhone safe area</td></tr>
+          <tr><td>SEO</td><td>JSON-LD structured data</td></tr>
+          <tr><td>Rich Text Editor</td><td>Full formatting toolbar</td></tr>
+          <tr><td>Code Blocks</td><td>VS Code Dark+ syntax highlighting</td></tr>
+          <tr><td>FAQs, Notices, Prerequisites</td><td>Full stack CRUD</td></tr>
+          <tr><td>Wishlist & Share</td><td>Bookmark courses, share button</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 5. PLANNED -->
+  <section id="s5" class="page-break">
+    <h2><span class="num">5</span> Features In Progress / Planned</h2>
+    <table>
+      <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Custom domain wayne-lms.example.com</td><td><span class="badge badge-progress">In Progress</span></td><td>DNS & Vercel config</td></tr>
+        <tr><td>AWS SES Email</td><td><span class="badge badge-planned">Planned</span></td><td>Transactional & marketing emails</td></tr>
+        <tr><td>Payment Integration</td><td><span class="badge badge-planned">Planned</span></td><td>Stripe & PayPal</td></tr>
+        <tr><td>Redis Caching</td><td><span class="badge badge-planned">Planned</span></td><td>Query caching, rate limiting</td></tr>
+        <tr><td>CI/CD Pipeline</td><td><span class="badge badge-planned">Planned</span></td><td>GitHub Actions</td></tr>
+        <tr><td>AR/ES Content Translations</td><td><span class="badge badge-planned">Planned</span></td><td>Course content in Arabic & Spanish</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 6. DATABASE -->
+  <section id="s6">
+    <h2><span class="num">6</span> Database Overview</h2>
+    <p>The platform runs on PostgreSQL with 21 Django applications managing the full data model.</p>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="number">21</div><div class="label">Django Apps</div></div>
+      <div class="summary-card"><div class="number">10</div><div class="label">Published Courses</div></div>
+      <div class="summary-card"><div class="number">29+</div><div class="label">Registered Users</div></div>
+      <div class="summary-card"><div class="number">12</div><div class="label">Coding Tracks</div></div>
+      <div class="summary-card"><div class="number">56</div><div class="label">Concepts</div></div>
+      <div class="summary-card"><div class="number">94+</div><div class="label">Lessons</div></div>
+    </div>
+  </section>
+
+  <!-- 7. API -->
+  <section id="s7">
+    <h2><span class="num">7</span> API Surface</h2>
+    <p>The backend exposes <strong>100+ RESTful endpoints</strong> under <code>/api/v1/</code>, covering all platform resources. All endpoints use JWT authentication, with public read access for catalog browsing.</p>
+    <table>
+      <thead><tr><th>Resource Group</th><th>Endpoints</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td>Courses, Lessons, Curriculum</td><td>CRUD + search + filters</td><td>Public read / Admin write</td></tr>
+        <tr><td>Enrollments, Progress</td><td>Enroll, track, complete</td><td>Authenticated</td></tr>
+        <tr><td>Tracks, Concepts, Exercises</td><td>Browse, submit, evaluate</td><td>Authenticated</td></tr>
+        <tr><td>Quizzes, Assignments</td><td>Take, submit, grade</td><td>Authenticated</td></tr>
+        <tr><td>Users, Auth</td><td>Register, login, OAuth, profile</td><td>Mixed</td></tr>
+        <tr><td>Admin (all resources)</td><td>Full CRUD + analytics</td><td>Admin only</td></tr>
+        <tr><td>Gamification, Certificates</td><td>Points, badges, generate cert</td><td>Authenticated</td></tr>
+        <tr><td>Coupons, Payments, Bundles</td><td>Validate, apply, manage</td><td>Mixed</td></tr>
+        <tr><td>Media</td><td>Upload, serve via R2</td><td>Admin upload</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8. DESIGN -->
+  <section id="s8">
+    <h2><span class="num">8</span> Design System</h2>
+    <table>
+      <thead><tr><th>Element</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Background</td><td>White (#FFFFFF)</td></tr>
+        <tr><td>Primary Accent</td><td style="color: var(--orange); font-weight: 700;">#F97316 (Orange)</td></tr>
+        <tr><td>Heading Font</td><td>Manrope (700, 800)</td></tr>
+        <tr><td>Body Font</td><td>Inter (400, 500)</td></tr>
+        <tr><td>Design Inspiration</td><td>exercism.org — clean, developer-focused layout</td></tr>
+        <tr><td>Language Logos</td><td>Devicon CDN</td></tr>
+        <tr><td>Layout</td><td>Responsive grid, mobile-first</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 9. DEPLOYMENT -->
+  <section id="s9" class="page-break">
+    <h2><span class="num">9</span> Deployment &amp; Infrastructure</h2>
+    <table>
+      <thead><tr><th>Component</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td>Frontend Hosting</td><td>Vercel (wayne-lms.example.com)</td></tr>
+        <tr><td>Backend Server</td><td>DigitalOcean Droplet</td></tr>
+        <tr><td>Region</td><td>Bangalore (BLR1)</td></tr>
+        <tr><td>OS</td><td>Ubuntu 24.04 LTS</td></tr>
+        <tr><td>Specs</td><td>2 GB RAM, 1 vCPU, 70 GB SSD</td></tr>
+        <tr><td>Cost</td><td>$19.20/month</td></tr>
+        <tr><td>Web Stack</td><td>Nginx → Gunicorn → Django</td></tr>
+        <tr><td>SSL</td><td>Let's Encrypt + Cloudflare Full (Strict)</td></tr>
+        <tr><td>Media CDN</td><td>Cloudflare R2 (media.fiveniners.com)</td></tr>
+        <tr><td>API Domain</td><td>api.wayne-lms.example.com</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<footer>
+  <div style="font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 8px;">million<span style="color: var(--orange);">coders</span></div>
+  © 2026 Wayne LMS. All rights reserved.<br>
+  Generated March 2026 — Confidential
+</footer>
+
+</body>
+</html>

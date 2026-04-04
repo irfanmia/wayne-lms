@@ -1,0 +1,41 @@
+{
+  "username": "irfan_codes",
+  "name": "Irfan Ali",
+  "avatar": "https://placehold.co/200x200/3B82F6/white?text=IA",
+  "bio": {
+    "en": "Full-stack developer passionate about clean code and open source.",
+    "ar": "مطور شامل شغوف بالأكواد النظيفة والمصادر المفتوحة.",
+    "es": "Desarrollador full-stack apasionado por el código limpio y el open source."
+  },
+  "location": "Dubai, UAE",
+  "reputation": 2840,
+  "streak": 12,
+  "joinedDate": "2024-06-15",
+  "isPro": true,
+  "badges": [
+    { "name": { "en": "Early Adopter", "ar": "مستخدم مبكر", "es": "Pionero" }, "icon": "🌟", "description": { "en": "Joined during beta", "ar": "انضم خلال النسخة التجريبية", "es": "Se unió durante la beta" } },
+    { "name": { "en": "Streak Master", "ar": "سيد السلاسل", "es": "Maestro de Rachas" }, "icon": "🔥", "description": { "en": "10+ day streak", "ar": "سلسلة أكثر من 10 أيام", "es": "Racha de más de 10 días" } },
+    { "name": { "en": "Python Pro", "ar": "محترف Python", "es": "Profesional de Python" }, "icon": "🐍", "description": { "en": "Completed Python track", "ar": "أكمل مسار Python", "es": "Completó la ruta de Python" } },
+    { "name": { "en": "Helper", "ar": "مساعد", "es": "Ayudante" }, "icon": "🤝", "description": { "en": "Mentored 10+ students", "ar": "أرشد أكثر من 10 طلاب", "es": "Mentoreó a más de 10 estudiantes" } }
+  ],
+  "activeTracks": [
+    { "slug": "python", "name": "Python", "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg", "progress": 72, "exercisesCompleted": 102, "totalExercises": 142 },
+    { "slug": "javascript", "name": "JavaScript", "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", "progress": 35, "exercisesCompleted": 55, "totalExercises": 158 },
+    { "slug": "rust", "name": "Rust", "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-original.svg", "progress": 12, "exercisesCompleted": 12, "totalExercises": 96 }
+  ],
+  "recentActivity": [
+    { "type": "completed", "exercise": "Resistor Color", "track": "Python", "time": { "en": "2 hours ago", "ar": "منذ ساعتين", "es": "hace 2 horas" } },
+    { "type": "started", "exercise": "Lucian's Lasagna", "track": "JavaScript", "time": { "en": "5 hours ago", "ar": "منذ 5 ساعات", "es": "hace 5 horas" } },
+    { "type": "submitted", "exercise": "Hello World", "track": "Rust", "time": { "en": "1 day ago", "ar": "منذ يوم", "es": "hace 1 día" } },
+    { "type": "completed", "exercise": "Two Fer", "track": "Python", "time": { "en": "2 days ago", "ar": "منذ يومين", "es": "hace 2 días" } },
+    { "type": "earned_badge", "exercise": "Streak Master", "track": "", "time": { "en": "3 days ago", "ar": "منذ 3 أيام", "es": "hace 3 días" } }
+  ],
+  "certificates": [
+    { "id": "cert-py-2025", "track": "Python", "name": { "en": "Python Fundamentals", "ar": "أساسيات Python", "es": "Fundamentos de Python" }, "date": "2025-01-15", "status": "earned" }
+  ],
+  "solutions": [
+    { "exercise": "Hello World", "track": "Python", "stars": 24, "publishedAt": "2024-08-10" },
+    { "exercise": "Two Fer", "track": "Python", "stars": 18, "publishedAt": "2024-09-02" },
+    { "exercise": "Hello World", "track": "JavaScript", "stars": 12, "publishedAt": "2024-10-15" }
+  ]
+}

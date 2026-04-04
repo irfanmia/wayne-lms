@@ -1,0 +1,12 @@
+Django>=4.2,<5.0
+djangorestframework>=3.14
+djangorestframework-simplejwt>=5.3
+django-cors-headers>=4.3
+psycopg2-binary>=2.9
+celery>=5.3
+redis>=5.0
+gunicorn>=21.2
+docker>=7.0
+python-dotenv>=1.0
+boto3==1.42.57
+django-storages==1.14.6

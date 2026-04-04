@@ -1,0 +1,14 @@
+[
+  { "slug": "basics", "trackSlug": "python", "name": "Basics", "x": 400, "y": 50, "prerequisites": [], "status": "completed" },
+  { "slug": "strings", "trackSlug": "python", "name": "Strings", "x": 250, "y": 150, "prerequisites": ["basics"], "status": "completed" },
+  { "slug": "numbers", "trackSlug": "python", "name": "Numbers", "x": 550, "y": 150, "prerequisites": ["basics"], "status": "in-progress" },
+  { "slug": "conditionals", "trackSlug": "python", "name": "Conditionals", "x": 150, "y": 250, "prerequisites": ["basics"], "status": "available" },
+  { "slug": "lists", "trackSlug": "python", "name": "Lists", "x": 400, "y": 250, "prerequisites": ["strings", "numbers"], "status": "available" },
+  { "slug": "loops", "trackSlug": "python", "name": "Loops", "x": 650, "y": 250, "prerequisites": ["numbers", "conditionals"], "status": "locked" },
+  { "slug": "sets", "trackSlug": "python", "name": "Sets", "x": 250, "y": 350, "prerequisites": ["lists"], "status": "locked" },
+  { "slug": "dicts", "trackSlug": "python", "name": "Dictionaries", "x": 550, "y": 350, "prerequisites": ["lists", "loops"], "status": "locked" },
+  { "slug": "functions", "trackSlug": "python", "name": "Functions", "x": 400, "y": 450, "prerequisites": ["conditionals", "loops"], "status": "locked" },
+  { "slug": "classes", "trackSlug": "python", "name": "Classes", "x": 400, "y": 550, "prerequisites": ["functions", "dicts"], "status": "locked" },
+  { "slug": "algorithms", "trackSlug": "python", "name": "Algorithms", "x": 250, "y": 550, "prerequisites": ["functions", "lists"], "status": "locked" },
+  { "slug": "data-structures", "trackSlug": "python", "name": "Data Structures", "x": 550, "y": 550, "prerequisites": ["classes", "lists"], "status": "locked" }
+]

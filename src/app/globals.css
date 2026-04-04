@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --color-orange-50: #FFF7ED;
+  --color-orange-100: #FFEDD5;
+  --color-orange-500: #F97316;
+  --color-orange-600: #EA580C;
+  --color-orange-700: #C2410C;
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Heading styles - larger size, lighter weight */
+.font-heading { font-weight: 500 !important; }
+
+body {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F9FAFB; }
+::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #F97316; }
+
+/* Grid backgrounds */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-grid-orange {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Floating particles */
+.floating-particle {
+  position: absolute;
+  background: #F97316;
+  border-radius: 50%;
+  animation: float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(-8px); }
+  75% { transform: translateY(-25px) translateX(5px); }
+}
+
+/* Flame animation for streak */
+@keyframes flame {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-3deg); }
+  50% { transform: scale(1.05) rotate(2deg); }
+  75% { transform: scale(1.12) rotate(-2deg); }
+}
+
+.animate-flame {
+  animation: flame 1.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Nav link hover underline */
+.nav-link-hover {
+  position: relative;
+}
+.nav-link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #F97316;
+  transition: width 0.3s ease;
+}
+.nav-link-hover:hover::after {
+  width: 100%;
+}
+
+/* Card hover glow */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-hover:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+  border-color: #FDBA74;
+}
+
+/* Button hover glow */
+.btn-glow {
+  transition: all 0.25s ease;
+}
+.btn-glow:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+}
+
+/* Popular plan glow */
+.plan-glow {
+  box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.2);
+  animation: plan-pulse 3s ease-in-out infinite;
+}
+@keyframes plan-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.2); }
+  50% { box-shadow: 0 0 30px 5px rgba(249, 115, 22, 0.15); }
+}
+
+/* Cursor blink for code editor */
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.animate-cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .floating-particle,
+  .animate-flame,
+  .plan-glow {
+    animation: none !important;
+  }
+  .card-hover:hover {
+    transform: none;
+  }
+  .btn-glow:hover {
+    transform: none;
+  }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.25s ease-out;
+}
+
+/* Blockly trashcan — default position, slightly transparent */
+.blocklyTrash {
+  opacity: 0.8;
+}
+.blocklyTrash:hover {
+  opacity: 1;
+}
+
+/* Hide Blockly toolbox and trashcan on mobile */
+@media (max-width: 767px) {
+  .blocklyToolboxDiv,
+  .blocklyFlyout,
+  .blocklyFlyoutBackground,
+  .blocklyFlyoutScrollbar,
+  .blocklyTrash {
+    display: none !important;
+  }
+}
