@@ -149,7 +149,7 @@ export default function AnalyticsPage() {
               {topCourses.map((c, i) => (
                 <div key={c.name}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-gray-700 font-medium">{i + 1}. {c.name}</span>
+                    <span className="text-sm text-gray-700 font-medium">{i + 1}. {typeof c.name === 'object' && c.name !== null ? ((c.name as Record<string, string>).en || Object.values(c.name as Record<string, string>)[0]) : String(c.name)}</span>
                     <span className="text-xs text-gray-500">{c.students.toLocaleString()} students</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-3">
