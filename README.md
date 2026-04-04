@@ -1,12 +1,13 @@
-# Wayne LMS LMS
+# Wayne LMS
 
-A full-featured Learning Management System built with Next.js 16 and Django 5. Features course management, interactive exercises, quizzes, gamification, certificates, and a complete admin dashboard.
+A full-featured Learning Management System combining Exercism-style coding exercises with MasterStudy-style course management. Built with Next.js 16 and Django 5.
 
-## 🚀 Live Demo
+## 🚀 Live
 
-- **Platform**: https://wayne-lms.example.com
-- **API**: https://api.wayne-lms.example.com/api/v1/
-- **Admin Dashboard**: https://wayne-lms.example.com/admin/
+- **Platform**: [https://wayne-lms.vercel.app](https://wayne-lms.vercel.app)
+- **API**: [https://waynelmsapi.fiveniners.com/api/v1/](https://waynelmsapi.fiveniners.com/api/v1/)
+- **Admin Dashboard**: [https://wayne-lms.vercel.app/admin/](https://wayne-lms.vercel.app/admin/)
+- **Django Admin**: [https://waynelmsapi.fiveniners.com/admin/](https://waynelmsapi.fiveniners.com/admin/)
 
 ## 🏗️ Architecture
 
@@ -20,9 +21,11 @@ A full-featured Learning Management System built with Next.js 16 and Django 5. F
 ```
 
 - **Frontend**: Next.js 16 (App Router) — deployed on Vercel
-- **Backend**: Django 5 + Django REST Framework — deployed on DigitalOcean
+- **Backend**: Django 5 + Django REST Framework — deployed on DigitalOcean (Bangalore)
 - **Database**: PostgreSQL (production), SQLite (development)
 - **Auth**: JWT (SimpleJWT) + GitHub OAuth (NextAuth.js)
+- **Storage**: Cloudflare R2 (S3-compatible)
+- **SSL**: Let's Encrypt (auto-renew)
 - **Task Queue**: Celery + Redis
 - **Code Execution**: Docker-sandboxed containers
 
@@ -31,15 +34,26 @@ A full-featured Learning Management System built with Next.js 16 and Django 5. F
 ### Learning
 - 📚 Course catalog with filtering by category, level, and price
 - 🎥 Video lessons (YouTube, Vimeo, MP4, embeds)
-- 📝 Text lessons with rich content
+- 📝 Text lessons with rich HTML content & syntax-highlighted code blocks
 - 📊 Slide-based lessons
 - 🔴 Live stream lessons (YouTube/Vimeo/Zoom integration)
 - ✅ Lesson progress tracking with completion percentage
-- 📋 Assignments with submission and grading
-- 💬 Per-lesson discussion threads with nested replies
+- 📋 5 Assignment types (essay, code, file upload, URL, mixed) with auto-grading
+- 💬 Per-lesson discussion threads (slide-in panel with nested replies)
+- 🔒 Drip content (sequential, date-based, timed)
+- 🔑 Prerequisites system with rich banner cards
+- 🆓 Trial/free lesson previews
+
+### Live Classes
+- 📡 Schedule and manage live sessions
+- 🟢 Google Meet / 🔵 Zoom / 🟣 Microsoft Teams support
+- ⏱️ Countdown timers for upcoming sessions
+- 🔴 Live status indicators (animated pulse)
+- 📹 Recording links for completed sessions
+- 👥 Attendance tracking
 
 ### Assessment
-- ❓ Module quizzes with multiple question types (single/multi choice, true/false, fill-blank)
+- ❓ 6 quiz question types (single choice, multi choice, true/false, fill-blank, matching, short answer)
 - 📊 Course assessments with pass/fail and score tracking
 - 🔗 Public/shareable standalone quizzes
 - ⏱️ Quiz time limits, randomization, and retry settings
@@ -47,10 +61,18 @@ A full-featured Learning Management System built with Next.js 16 and Django 5. F
 
 ### Practice & Exercises
 - 💻 Interactive code exercises with in-browser editor
-- 🐍 Multi-language support (Python, JavaScript, TypeScript)
+- 🐍 Multi-language support (Python, JavaScript, TypeScript, 50+ languages)
 - 🐳 Docker-sandboxed code execution
-- 🗺️ Concept maps linking exercises to learning objectives
-- 🏆 Course-specific badges (first exercise, all easy, streak, etc.)
+- 🗺️ Dynamic concept maps with auto-layout (topological sort)
+- 🏆 Course-specific badges (first exercise, all easy, streak, perfect run, etc.)
+- 🔄 Learning ↔ Practice mode toggle
+
+### Kids Coding Module
+- 🧒 Age-appropriate visual coding education
+- 🧩 Blockly block editor with 30+ custom block types
+- 🎮 PixiJS game stage with per-challenge-type visuals
+- 👨‍👩‍👧 Parent & teacher dashboards
+- 🏫 Classroom management
 
 ### Gamification
 - 🏅 Points system and badges
@@ -58,34 +80,46 @@ A full-featured Learning Management System built with Next.js 16 and Django 5. F
 - 🏆 Leaderboard
 - 📜 Certificates with unique verification UIDs
 
+### Pricing & Monetization
+- 💰 9 pricing models: Free, One-time, Offline/Institute, Membership/Subscription, Installment, Bundle, Pay What You Want, Waitlist, Scholarship
+- 📦 Course bundles with discount pricing
+- 🎟️ Coupon system (manual + smart coupons: Birthday, Welcome, Referral, Abandoned Cart)
+- 📅 Seasonal coupon templates
+
 ### Course Management (Admin)
-- 📝 Full course builder with curriculum editor
+- 📝 Full course builder with curriculum editor (MasterStudy-matching UX)
 - 📦 Course bundles
-- 💰 Pricing (free, paid, membership)
-- 🎟️ Coupon system with smart coupons
-- 📅 Drip content scheduling (sequential, date-based, timed)
+- 📅 Drip content scheduling
 - ❓ FAQ editor per course
 - 📢 Course notices/announcements
 - 👥 Multi-instructor support
 - 🔒 Prerequisites system
+- 🎛️ All features optional per course via toggle flags
 
-### Admin Dashboard
+### Admin Dashboard (12 pages)
+- 📊 Dashboard with real-time analytics charts
+- 📚 Course management (CRUD, status, builder)
+- 💻 Exercise management
+- 📁 Content library
 - 👤 User management (CRUD, roles, suspend/activate)
-- 📊 Analytics and revenue charts
+- 📈 Analytics & revenue charts
+- 🎟️ Coupon management (manual + bulk generate)
+- 📦 Bundle management
+- 📡 Live classes management
+- 🎓 Certificate management
 - 💳 Payment/order management with refunds
 - 📧 Email templates and bulk email
 - 🎨 Platform settings
-- 📁 Media manager
-- 📋 Forms builder
-- 🔐 Role-based access control
 
 ### Other
 - 🌍 i18n — English (default), Arabic (RTL), Spanish
 - 🔍 SEO with JSON-LD structured data, sitemap, robots.txt
 - ❤️ Course wishlist
+- 🔗 Share button
 - 👤 User profiles with customizable bios
 - 🎓 Instructor dashboard with student management
-- 📱 Responsive design
+- 📱 Fully responsive (mobile, tablet, desktop)
+- 🔒 Security headers, rate limiting, CORS
 
 ## 📁 Project Structure
 
@@ -93,57 +127,58 @@ A full-featured Learning Management System built with Next.js 16 and Django 5. F
 wayne-lms/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
-│   │   ├── admin/              # Admin dashboard pages
-│   │   ├── courses/            # Course catalog & learning
-│   │   ├── tracks/             # Exercise tracks
+│   │   ├── admin/              # Admin dashboard (12 pages)
+│   │   ├── courses/            # Course catalog & learning view
+│   │   ├── tracks/             # Exercise tracks & practice
+│   │   ├── kids/               # Kids coding module
 │   │   ├── instructor/         # Instructor dashboard
+│   │   ├── dashboard/          # Student dashboard
 │   │   ├── login/ & signup/    # Authentication
 │   │   └── ...
-│   ├── components/             # React components
+│   ├── components/             # 50+ React components
 │   │   ├── admin/              # Admin UI components
 │   │   ├── auth/               # Auth guards & forms
-│   │   ├── course-builder/     # Course creation components
+│   │   ├── course-builder/     # Course creation (MasterStudy UX)
 │   │   ├── learn/              # Learning view components
 │   │   ├── practice/           # Exercise/practice components
+│   │   ├── kids/               # Blockly + PixiJS components
 │   │   ├── ui/                 # Shared UI primitives
-│   │   └── ...
-│   ├── data/                   # Static data & mock data
-│   │   ├── courses.json        # Offline fallback course data
-│   │   └── ...
-│   ├── hooks/                  # Custom React hooks
+│   │   └── layout/             # Navbar, Footer, Sidebar
 │   ├── lib/                    # Core utilities
-│   │   ├── api.ts              # API client (fetch wrapper)
-│   │   ├── auth.tsx            # Auth context & provider
+│   │   ├── api.ts              # API client (100+ endpoints)
+│   │   ├── auth.tsx            # Auth context & JWT management
+│   │   ├── kids-api.ts         # Kids module API client
 │   │   └── i18n.tsx            # Internationalization
 │   └── locales/                # Translation files (en, ar, es)
 ├── backend/
 │   ├── config/                 # Django settings, URLs, WSGI/ASGI
-│   ├── apps/
-│   │   ├── users/              # User model & auth endpoints
+│   ├── apps/                   # 26 Django apps
+│   │   ├── users/              # User model & auth
 │   │   ├── courses/            # Courses, modules, lessons, quizzes
 │   │   ├── tracks/             # Exercise tracks
-│   │   ├── progress/           # Learning progress tracking
-│   │   ├── certificates/       # Certificate generation & verification
-│   │   ├── executor/           # Docker code execution engine
+│   │   ├── progress/           # Learning progress
+│   │   ├── certificates/       # Certificate generation
+│   │   ├── executor/           # Docker code execution
 │   │   ├── gamification/       # Points, badges, leaderboard
-│   │   ├── assignments/        # Assignment submission & grading
+│   │   ├── assignments/        # 5 assignment types + auto-grading
 │   │   ├── bundles/            # Course bundles
 │   │   ├── coupons/            # Coupon & discount system
-│   │   ├── payments/           # Orders, pricing plans
-│   │   ├── analytics/          # Instructor & admin analytics
+│   │   ├── payments/           # Orders, 9 pricing models
+│   │   ├── live_classes/       # Live sessions (Meet/Zoom/Teams)
+│   │   ├── analytics/          # Charts & reporting
 │   │   ├── emails/             # Email templates & bulk sending
 │   │   ├── notifications/      # In-app notifications
-│   │   ├── roles/              # RBAC roles & permissions
+│   │   ├── roles/              # RBAC
 │   │   ├── groups/             # Student groups
-│   │   ├── lmsforms/           # Dynamic forms
-│   │   ├── media_manager/      # File uploads
 │   │   ├── platform/           # Platform settings
-│   │   └── content_library/    # Shared content library
+│   │   ├── content_library/    # Shared content
+│   │   ├── kids_profiles/      # Kids user profiles
+│   │   ├── kids_curriculum/    # Kids courses & challenges
+│   │   ├── kids_progress/      # Kids progress tracking
+│   │   ├── kids_classroom/     # Classroom management
+│   │   └── ...
 │   └── manage.py
-├── public/                     # Static assets
-├── QA-REPORT.md                # QA test results
-├── QA-FIXES.md                 # QA fix log
-└── docker-compose.yml          # Dev environment (DB, Redis)
+└── public/                     # Static assets
 ```
 
 ## 🛠️ Tech Stack
@@ -157,6 +192,8 @@ wayne-lms/
 | Tailwind CSS 4 | Styling |
 | Framer Motion | Animations |
 | NextAuth.js 4 | GitHub OAuth |
+| Blockly | Visual block editor (kids) |
+| PixiJS | Game stage rendering (kids) |
 
 ### Backend
 | Technology | Purpose |
@@ -169,6 +206,8 @@ wayne-lms/
 | Redis | Cache & message broker |
 | Docker | Sandboxed code execution |
 | Gunicorn | WSGI server |
+| Nginx | Reverse proxy |
+| Cloudflare R2 | Media storage |
 
 ## 🚀 Getting Started
 
@@ -177,49 +216,39 @@ wayne-lms/
 - Python 3.11+
 - PostgreSQL (production) or SQLite (dev)
 - Redis (for Celery)
-- Docker (for code execution)
 
 ### Frontend Setup
 ```bash
-# Install dependencies
 npm install
-
-# Copy environment variables
 cp .env.example .env.local
-# Edit .env.local with your values
-
-# Run development server
+# Edit .env.local with your API URL
 npm run dev
 ```
 
 ### Backend Setup
 ```bash
 cd backend
-
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
-
-# Set environment variables (or create backend/.env)
-export DJANGO_SECRET_KEY=your-secret-key
-export DJANGO_DEBUG=True
 
 # Run migrations
 python manage.py migrate
 
-# Seed data (optional)
-python manage.py seed
+# Seed data
+python manage.py seed              # Core data (tracks, courses, etc.)
+python manage.py seed_practice     # Practice exercises & badges
+python manage.py seed_features     # All feature data
+python manage.py seed_users        # 28 sample users
+python manage.py seed_coupons      # Coupon data
+python manage.py seed_live_classes # Live class sessions
 
-# Run development server
+# Run server
 python manage.py runserver
 ```
 
 ### Environment Variables
-
-See `.env.example` for all required variables. Key ones:
 
 | Variable | Description |
 |---|---|
@@ -227,21 +256,20 @@ See `.env.example` for all required variables. Key ones:
 | `NEXTAUTH_SECRET` | NextAuth.js secret |
 | `GITHUB_ID` / `GITHUB_SECRET` | GitHub OAuth credentials |
 | `DJANGO_SECRET_KEY` | Django secret key |
-| `DB_*` | PostgreSQL connection |
-| `REDIS_URL` | Redis connection for Celery |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` | PostgreSQL connection |
+| `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME` | Cloudflare R2 storage |
 
-## 📡 API Documentation
+## 📡 API Endpoints (100+)
 
-Base URL: `/api/v1/`
+Base URL: `https://waynelmsapi.fiveniners.com/api/v1/`
 
 ### Authentication
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/auth/token/` | Login (email or username + password) → JWT |
+| POST | `/auth/login/` | Login → JWT tokens |
 | POST | `/auth/token/refresh/` | Refresh access token |
 | POST | `/auth/register/` | Register new user |
-| GET | `/auth/me/` | Get current user profile |
-| POST | `/users/auth/github/` | GitHub OAuth exchange |
+| GET | `/auth/me/` | Current user profile |
 
 ### Courses
 | Method | Endpoint | Description |
@@ -251,29 +279,36 @@ Base URL: `/api/v1/`
 | POST | `/courses/` | Create course (staff) |
 | GET | `/courses/{slug}/learn/` | Learning view with progress |
 | POST | `/courses/{slug}/enroll/` | Enroll in course |
-| GET | `/courses/lessons/{id}/` | Get lesson content |
-| POST | `/courses/lessons/{id}/complete/` | Mark lesson complete |
-| GET/POST | `/courses/lessons/{id}/comments/` | Lesson discussions |
-| GET | `/courses/quizzes/{id}/` | Get quiz questions |
-| POST | `/courses/quizzes/{id}/submit/` | Submit quiz answers |
+| GET | `/courses/lessons/{id}/` | Lesson content |
+| POST | `/courses/lessons/{id}/complete/` | Mark complete |
+| GET/POST | `/courses/lessons/{id}/comments/` | Discussions |
+
+### Live Classes
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/live-classes/` | List all live classes |
+| POST | `/live-classes/` | Create live class (staff) |
+| POST | `/live-classes/{id}/start/` | Start session |
+| POST | `/live-classes/{id}/end/` | End session |
+| GET | `/live-classes/upcoming/` | Upcoming sessions |
 
 ### Tracks & Exercises
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/tracks/` | List exercise tracks |
-| GET | `/tracks/{slug}/exercises/` | List exercises for track |
-| POST | `/tracks/{slug}/exercises/{slug}/submit/` | Submit code solution |
+| GET | `/tracks/{slug}/exercises/` | Track exercises |
 | POST | `/execute/` | Execute code in sandbox |
 
 ### Admin
 | Method | Endpoint | Description |
 |---|---|---|
-| GET/POST | `/users/` | Admin user management |
+| GET/POST | `/users/` | User management |
 | GET | `/users/stats/` | User statistics |
-| GET/POST | `/bundles/` | Bundle management |
-| GET/POST | `/coupons/coupons/` | Coupon management |
-| GET/POST | `/payments/orders/` | Order management |
-| GET | `/analytics/charts/` | Dashboard analytics |
+| GET/POST | `/bundles/` | Bundles |
+| GET/POST | `/coupons/coupons/` | Coupons |
+| GET/POST | `/payments/orders/` | Orders |
+| GET | `/analytics/charts/` | Dashboard charts |
+| GET/PATCH | `/platform/settings/` | Platform settings |
 
 ## 🎨 Design System
 
@@ -287,64 +322,49 @@ Base URL: `/api/v1/`
 
 ## 🌍 Internationalization
 
-Supported languages:
-- 🇬🇧 English (default)
-- 🇸🇦 Arabic (with full RTL support)
-- 🇪🇸 Spanish
+| Language | Direction | Status |
+|---|---|---|
+| 🇬🇧 English | LTR | Default |
+| 🇸🇦 Arabic | RTL | Full support |
+| 🇪🇸 Spanish | LTR | Full support |
 
-Translation files in `src/locales/`. Course titles and descriptions are stored as JSON objects `{"en": "...", "ar": "...", "es": "..."}` for per-field translation.
+Course content stored as multilingual JSON: `{"en": "...", "ar": "...", "es": "..."}`
 
-## 📊 Admin Dashboard
+## 🖥️ Deployment
 
-Full-featured admin panel at `/admin/` with:
-- User management (search, filter by role/status, CRUD)
-- Course management with visual course builder
-- Analytics dashboard with enrollment/revenue charts
-- Payment & order management
-- Coupon & discount management
-- Email template editor and bulk sending
-- Platform settings configuration
-- Content library for reusable materials
-- Role-based access control
+### Frontend (Vercel)
+- Auto-deploys from `main` branch
+- Environment variables in Vercel dashboard
+
+### Backend (DigitalOcean — Bangalore BLR1)
+- **Server**: 2GB RAM, 1 CPU, 50GB SSD
+- **Stack**: Nginx → Gunicorn (3 workers) → Django → PostgreSQL
+- **SSL**: Let's Encrypt (auto-renew)
+- **API**: `https://waynelmsapi.fiveniners.com/api/v1/`
+
+## 📊 Current Data
+
+| Entity | Count |
+|---|---|
+| Courses | 9 (published) |
+| Practice Tracks | 12 |
+| Exercises | 27+ |
+| Users | 28 |
+| Live Classes | 15 |
+| Course Bundles | 4 |
+| Coupons | Active |
+| Leaderboard | 11 entries |
 
 ## 🔒 Security
 
 - JWT authentication with token rotation
 - CORS restricted to allowed origins
-- CSRF protection enabled
-- Security headers (XSS, Content-Type sniffing, HSTS, X-Frame-Options)
+- CSRF protection
+- Security headers (XSS, Content-Type, HSTS, X-Frame-Options)
 - Rate limiting (100/hr anonymous, 1000/hr authenticated)
-- Password validation
-- Secure cookies in production
 - Docker-sandboxed code execution with timeout & memory limits
-- Input validation on all API endpoints
-
-## 📦 Deployment
-
-### Frontend (Vercel)
-- Auto-deploys from `main` branch
-- Environment variables set in Vercel dashboard
-- Static generation for public pages
-
-### Backend (DigitalOcean)
-- Gunicorn + Nginx
-- PostgreSQL database
-- Redis for Celery
-- `DEBUG=False` in production
-- Allowed hosts: `api.wayne-lms.example.com`
-
-## 🗺️ Roadmap
-
-- [ ] Real-time notifications (WebSockets)
-- [ ] Video upload & transcoding
-- [ ] AI-powered code review
-- [ ] Mobile app (React Native)
-- [ ] Payment gateway integration (Stripe)
-- [ ] Advanced analytics & reporting
-- [ ] Course reviews & ratings
-- [ ] Social learning features
-- [ ] SCORM/xAPI compliance
+- Environment-based secrets (no hardcoded keys)
 
 ## 📄 License
 
-Private project — Wayne LMS © 2025
+Private project — Wayne LMS © 2026
