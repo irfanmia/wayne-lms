@@ -2,8 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   PracticeOverview, PracticeExerciseDetail, PracticeProgress, PracticeBadge,
-  mockPracticeOverview, mockConceptMap, mockPracticeProgress, mockPracticeBadges,
-  mockExerciseDetails,
 } from '@/data/mockPracticeData';
 import ConceptMap from './ConceptMap';
 import ExerciseView from './ExerciseView';
@@ -28,16 +26,24 @@ async function fetchJSON(url: string) {
   return res.json();
 }
 
+const emptyOverview: PracticeOverview = { concepts: [], total_exercises: 0, completed_exercises: 0, total_points: 0 };
+const emptyConceptMap = { nodes: [], edges: [] };
+const emptyProgress: PracticeProgress = { completed: 0, total: 0, points: 0, badges_earned: 0, streak: 0 };
+
 export default function PracticeMode({ courseSlug, courseTitle }: Props) {
-  const [overview, setOverview] = useState<PracticeOverview>(mockPracticeOverview);
-  const [conceptMapData, setConceptMapData] = useState(mockConceptMap);
-  const [progress, setProgress] = useState<PracticeProgress>(mockPracticeProgress);
-  const [badges, setBadges] = useState<PracticeBadge[]>(mockPracticeBadges);
+  const [overview, setOverview] = useState<PracticeOverview>(emptyOverview);
+  const [conceptMapData, setConceptMapData] = useState(emptyConceptMap);
+  const [progress, setProgress] = useState<PracticeProgress>(emptyProgress);
+  const [badges, setBadges] = useState<PracticeBadge[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<PracticeExerciseDetail | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showBadges, setShowBadges] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const [ov, cm, pr, bg] = await Promise.all([
         fetchJSON(`${API}/courses/${courseSlug}/practice/`),
@@ -49,8 +55,11 @@ export default function PracticeMode({ courseSlug, courseTitle }: Props) {
       setConceptMapData(cm);
       setProgress(pr);
       setBadges(bg);
-    } catch {
-      // Use mock data
+    } catch (err) {
+      console.error('Failed to load practice data:', err);
+      setError('Failed to load practice data. Please enroll in this course first.');
+    } finally {
+      setLoading(false);
     }
   }, [courseSlug]);
 
@@ -63,26 +72,21 @@ export default function PracticeMode({ courseSlug, courseTitle }: Props) {
       const data = await fetchJSON(`${API}/courses/${courseSlug}/practice/exercises/${exerciseSlug}/`);
       setSelectedExercise(data);
     } catch {
-      // Try mock
-      const mock = mockExerciseDetails[exerciseSlug];
-      if (mock) setSelectedExercise(mock);
-      else {
-        // Build from overview data
-        const concept = overview.concepts.find(c => c.slug === conceptSlug);
-        const ex = concept?.exercises.find(e => e.slug === exerciseSlug);
-        if (ex) {
-          setSelectedExercise({
-            ...ex,
-            description: '',
-            instructions: `Complete the "${ex.title}" exercise.`,
-            starter_code: '# Write your code here\n',
-            test_code: '',
-            concept: concept?.title || '',
-            concept_slug: conceptSlug,
-            code_submitted: null,
-            attempts: 0,
-          });
-        }
+      // Build from overview data
+      const concept = overview.concepts.find(c => c.slug === conceptSlug);
+      const ex = concept?.exercises.find(e => e.slug === exerciseSlug);
+      if (ex) {
+        setSelectedExercise({
+          ...ex,
+          description: '',
+          instructions: `Complete the "${ex.title}" exercise.`,
+          starter_code: '# Write your code here\n',
+          test_code: '',
+          concept: concept?.title || '',
+          concept_slug: conceptSlug,
+          code_submitted: null,
+          attempts: 0,
+        });
       }
     }
     setSidebarOpen(false);
@@ -111,6 +115,40 @@ export default function PracticeMode({ courseSlug, courseTitle }: Props) {
       selectExercise(next.conceptSlug, next.slug);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading practice exercises...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center max-w-md">
+          <p className="text-red-500 text-lg mb-2">⚠️ {error}</p>
+          <button onClick={loadData} className="text-orange-600 hover:text-orange-700 font-medium cursor-pointer">
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (overview.total_exercises === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center max-w-md">
+          <p className="text-gray-500 text-lg">No practice exercises available for this course yet.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-white">
