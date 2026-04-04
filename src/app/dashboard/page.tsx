@@ -61,9 +61,10 @@ export default function DashboardPage() {
       api.getMyBadges().catch(() => []),
       api.getCertificates().catch(() => []),
       api.getTracks().catch(() => []),
+      api.getEnrolledCourses().catch(() => []),
     ];
 
-    Promise.all(promises).then(([me, badges, certs, tracks]) => {
+    Promise.all(promises).then(([me, badges, certs, tracks, enrolled]) => {
       if (me) {
         setDisplayName(me.username || me.display_name || '');
         setStreak(me.streak || 0);
@@ -80,6 +81,17 @@ export default function DashboardPage() {
           progress: 0,
           exercisesCompleted: 0,
           totalExercises: 0,
+        })));
+      }
+      // Set enrolled courses
+      if (enrolled) {
+        const courseList = Array.isArray(enrolled) ? enrolled : (enrolled.results || []);
+        setEnrolledCourses(courseList.map((c: Record<string, unknown>) => ({
+          slug: c.slug as string,
+          title: typeof c.title === "object" && c.title !== null ? (c.title as Record<string, string>).en || String(c.slug) : String(c.title || c.slug),
+          thumbnail: (c.thumbnail as string) || "",
+          progress: (c.progress as number) || 0,
+          category: (c.category as string) || "",
         })));
       }
     }).finally(() => setLoading(false));

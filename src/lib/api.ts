@@ -381,6 +381,7 @@ class ApiClient {
   // Badges
   async getBadges() { return this.request('/points/badges/'); }
   async getMyBadges() { return this.request('/points/badges/my/'); }
+  async getEnrolledCourses() { return this.request("/courses/enrolled/"); }
 
   // Gradebook
   async getStudentGrades() { return this.request('/gradebook/student/'); }
