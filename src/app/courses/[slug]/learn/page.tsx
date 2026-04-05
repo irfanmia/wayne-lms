@@ -13,6 +13,7 @@ import Discussion from '@/components/learn/Discussion';
 import AssignmentLoader from '@/components/learn/AssignmentLoader';
 import PracticeMode from '@/components/practice/PracticeMode';
 import CountdownTimer from '@/components/ui/CountdownTimer';
+import AITutorChat from '@/components/learn/AITutorChat';
 
 type ViewMode = 'lesson' | 'quiz';
 type CourseMode = 'learning' | 'practice' | 'live';
@@ -548,6 +549,17 @@ export default function LearnPage({ params }: { params: Promise<{ slug: string }
             </div>
           </div>
         </>
+      )}
+
+      {/* AI Tutor Chat */}
+      {currentLesson && courseData && (
+        <AITutorChat
+          courseId={courseData.id}
+          lessonId={currentLesson.id}
+          lessonType={currentLesson.lesson_type}
+          lessonTitle={t(currentLesson.title)}
+          lessonContent={currentLesson.content ? t(currentLesson.content) : ''}
+        />
       )}
     </div>
   );

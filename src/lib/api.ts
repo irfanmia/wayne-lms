@@ -437,6 +437,15 @@ class ApiClient {
   async endLiveClass(id: number) { return this.request(`/live-classes/${id}/end/`, { method: 'POST' }); }
   async cancelLiveClass(id: number) { return this.request(`/live-classes/${id}/cancel/`, { method: 'POST' }); }
   async joinLiveClass(id: number) { return this.request(`/live-classes/${id}/join/`, { method: 'POST' }); }
+
+  // AI Tutor
+  async getAITutorSettings() { return this.request('/ai-tutor/settings/'); }
+  async updateAITutorSettings(data: Record<string, unknown>) { return this.request('/ai-tutor/settings/', { method: 'PUT', body: JSON.stringify(data) }); }
+  async sendAITutorMessage(data: { course_id: number; lesson_id: number; lesson_type: string; lesson_title: string; lesson_content: string; message: string }) {
+    return this.request('/ai-tutor/chat/', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async getAITutorConversation(lessonId: number) { return this.request(`/ai-tutor/conversations/?lesson_id=${lessonId}`); }
+  async getAITutorSuggestedPrompts(lessonType: string) { return this.request(`/ai-tutor/suggested-prompts/?lesson_type=${lessonType}`); }
 }
 
 export const api = new ApiClient();

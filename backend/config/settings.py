@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'apps.kids_progress',
     'apps.kids_classroom',
     'apps.live_classes',
+    'apps.ai_tutor',
 ]
 
 MIDDLEWARE = [

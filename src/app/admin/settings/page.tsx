@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 
-const sections = ['General', 'Branding', 'Payment Gateways', 'Email Config', 'SEO', 'Integrations'] as const;
+const sections = ['General', 'Branding', 'Payment Gateways', 'Email Config', 'SEO', 'Integrations', 'AI Features'] as const;
 
 export default function SettingsPage() {
   const [active, setActive] = useState<string>('General');
@@ -58,6 +58,14 @@ export default function SettingsPage() {
     { name: 'Slack Notifications', enabled: false, key: '', placeholder: 'Webhook URL' },
   ]);
 
+  // AI Features state
+  const [aiTutorEnabled, setAiTutorEnabled] = useState(false);
+  const [aiProvider, setAiProvider] = useState('groq');
+  const [aiModel, setAiModel] = useState('llama-3.3-70b-versatile');
+  const [aiApiKey, setAiApiKey] = useState('');
+  const [aiSystemPrompt, setAiSystemPrompt] = useState('');
+  const [aiEmailNotifications, setAiEmailNotifications] = useState(true);
+
   const showSuccess = (msg: string) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(''), 3000); };
 
   useEffect(() => {
@@ -73,6 +81,15 @@ export default function SettingsPage() {
       if (res.meta_title) setMetaTitle(res.meta_title as string);
       if (res.meta_description) setMetaDesc(res.meta_description as string);
     }).catch(() => { /* settings may not exist yet */ });
+    // Load AI Tutor settings
+    api.getAITutorSettings().then((res: Record<string, unknown>) => {
+      if (res.enabled !== undefined) setAiTutorEnabled(!!res.enabled);
+      if (res.provider) setAiProvider(res.provider as string);
+      if (res.model_name) setAiModel(res.model_name as string);
+      if (res.api_key) setAiApiKey(res.api_key as string);
+      if (res.system_prompt) setAiSystemPrompt(res.system_prompt as string);
+      if (res.email_notifications !== undefined) setAiEmailNotifications(!!res.email_notifications);
+    }).catch(() => {});
   }, []);
 
   const save = async () => {
@@ -238,6 +255,120 @@ export default function SettingsPage() {
                   {intg.enabled && (
                     <input value={intg.key} onChange={e => updateIntKey(idx, e.target.value)} placeholder={intg.placeholder} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
                   )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {active === 'AI Features' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">AI Features</h3>
+              <p className="text-sm text-gray-500 mt-1">Wayne Intelligence AI-powered products for your LMS</p>
+            </div>
+
+            {/* AI Tutor — active product */}
+            <div className="p-5 border-2 border-orange-300 bg-orange-50/50 rounded-xl">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">🤖</span>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">AI Tutor Assistant</h4>
+                    <p className="text-xs text-gray-500">Context-aware chat tutor on every lesson</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAiTutorEnabled(!aiTutorEnabled)}
+                  className={`w-12 h-6 rounded-full transition-colors ${aiTutorEnabled ? 'bg-orange-500' : 'bg-gray-300'} relative`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${aiTutorEnabled ? 'left-6' : 'left-0.5'}`} />
+                </button>
+              </div>
+              {aiTutorEnabled && (
+                <div className="space-y-4 mt-4 pt-4 border-t border-orange-200">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">AI Provider</label>
+                      <select value={aiProvider} onChange={e => {
+                        setAiProvider(e.target.value);
+                        if (e.target.value === 'groq') setAiModel('llama-3.3-70b-versatile');
+                        else setAiModel('gpt-4o');
+                      }} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="groq">Groq (Free tier)</option>
+                        <option value="openai">OpenAI</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                      <input value={aiModel} onChange={e => setAiModel(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                    <input type="password" value={aiApiKey} onChange={e => setAiApiKey(e.target.value)} placeholder="Enter API key..." className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">System Prompt</label>
+                    <textarea value={aiSystemPrompt} onChange={e => setAiSystemPrompt(e.target.value)} rows={4} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Email Notifications</p>
+                      <p className="text-xs text-gray-400">Send detailed explanations to student email after answering doubts</p>
+                    </div>
+                    <button
+                      onClick={() => setAiEmailNotifications(!aiEmailNotifications)}
+                      className={`w-10 h-5 rounded-full transition-colors ${aiEmailNotifications ? 'bg-orange-500' : 'bg-gray-300'} relative`}
+                    >
+                      <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${aiEmailNotifications ? 'left-5' : 'left-0.5'}`} />
+                    </button>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await api.updateAITutorSettings({ enabled: aiTutorEnabled, provider: aiProvider, model_name: aiModel, api_key: aiApiKey, system_prompt: aiSystemPrompt, email_notifications: aiEmailNotifications });
+                        showSuccess('AI Tutor settings saved!');
+                      } catch { showSuccess('Failed to save AI Tutor settings'); }
+                    }}
+                    className="px-5 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition"
+                  >
+                    Save AI Tutor Settings
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Coming Soon products */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Coming Soon</h4>
+              {[
+                { icon: '🦉', name: 'EdOwl', desc: 'AI-driven assessment platform — MCQs to AI-evaluated handwritten answers' },
+                { icon: '🦅', name: 'EdHawk', desc: 'Personalized learning plans with AI-adapted difficulty and JD-based mock sessions' },
+                { icon: '🚀', name: 'LMS Pro', desc: 'AI-powered sales engine — drive revenue with smart course recommendations' },
+                { icon: '🗄️', name: 'Registry Management System', desc: 'Student records, credentials, and compliance management' },
+                { icon: '📜', name: 'BetterShare', desc: 'Certification platform — design, generate, verify and share certificates' },
+                { icon: '📊', name: 'CRM', desc: 'Central command panel for leads, approvals, payments, and workflows' },
+                { icon: '📋', name: 'AI Document Verification', desc: 'Automated document validation with confidence scoring' },
+                { icon: '📈', name: 'AI Analytics Module', desc: 'Cross-platform intelligence dashboard for learning and revenue insights' },
+                { icon: '💬', name: 'AI Assistant — Intelligent Chat', desc: '24/7 chatbot for student support, sales, and lead conversion' },
+              ].map(product => (
+                <div key={product.name} className="p-4 border border-gray-200 rounded-xl bg-gray-50/50 opacity-70">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{product.icon}</span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-gray-700">{product.name}</h4>
+                          <span className="text-[10px] px-2 py-0.5 bg-gray-200 text-gray-500 rounded-full font-medium">Coming Soon</span>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-0.5">{product.desc}</p>
+                      </div>
+                    </div>
+                    <div className="w-10 h-5 rounded-full bg-gray-200 relative cursor-not-allowed">
+                      <span className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow" />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

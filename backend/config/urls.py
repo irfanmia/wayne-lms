@@ -23,6 +23,7 @@ api_patterns = [
     path('gamification/', include('apps.gamification.urls')),
     path('', include('apps.analytics.urls')),
     path('assignments/', include('apps.assignments.urls')),
+    path('ai-tutor/', include('apps.ai_tutor.urls')),
     path('gradebook/', include('apps.gradebook.urls')),
     path('notifications/', include('apps.notifications.urls')),
     path('forms/', include('apps.lmsforms.urls')),
