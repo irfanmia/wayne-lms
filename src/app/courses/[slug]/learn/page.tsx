@@ -552,9 +552,9 @@ export default function LearnPage({ params }: { params: Promise<{ slug: string }
       )}
 
       {/* AI Tutor Chat */}
-      {currentLesson && courseData && (
+      {currentLesson && course && (
         <AITutorChat
-          courseId={courseData.id}
+          courseId={course.id}
           lessonId={currentLesson.id}
           lessonType={currentLesson.lesson_type}
           lessonTitle={t(currentLesson.title)}
