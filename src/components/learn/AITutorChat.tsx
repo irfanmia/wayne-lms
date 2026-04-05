@@ -77,14 +77,21 @@ export default function AITutorChat({ courseId, lessonId, lessonType, lessonTitl
       .catch(() => setEnabled(false));
   }, []);
 
-  // Load conversation + prompts when opened
+  // Reset messages when lesson changes
+  useEffect(() => {
+    setMessages([]);
+    setFullscreen(false);
+    setShowEmailNote(false);
+  }, [lessonId]);
+
+  // Load conversation + prompts when opened or lesson changes
   useEffect(() => {
     if (!open || !enabled) return;
     api.getAITutorConversation(lessonId)
       .then((d: { messages?: Message[] }) => {
-        if (d.messages && d.messages.length > 0) setMessages(d.messages);
+        setMessages(d.messages && d.messages.length > 0 ? d.messages : []);
       })
-      .catch(() => {});
+      .catch(() => setMessages([]));
     api.getAITutorSuggestedPrompts(lessonType)
       .then((d: { prompts: string[] }) => setSuggestedPrompts(d.prompts || []))
       .catch(() => {});
