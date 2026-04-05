@@ -139,6 +139,7 @@ export default function Assignment({
   const [testResults, setTestResults] = useState<AutoGradeResult | null>(null);
   const [previousAttempts, setPreviousAttempts] = useState<Submission[]>([]);
   const [showPrevious, setShowPrevious] = useState(false);
+  const [expandedAttempts, setExpandedAttempts] = useState<Set<number>>(new Set());
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const codeRef = useRef<HTMLTextAreaElement>(null);
@@ -453,20 +454,83 @@ export default function Assignment({
           </button>
           {showPrevious && previousAttempts.length > 0 && (
             <div className="mt-3 space-y-3">
-              {previousAttempts.map(a => (
-                <div key={a.id} className="border rounded-lg p-3 text-sm">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium">Attempt {a.attempt_number}</span>
-                    <span className="text-xs text-gray-400">{new Date(a.submitted_at).toLocaleString()}</span>
+              {previousAttempts.map(a => {
+                const isExpanded = expandedAttempts.has(a.id);
+                const toggleExpand = () => {
+                  setExpandedAttempts(prev => {
+                    const next = new Set(prev);
+                    if (next.has(a.id)) next.delete(a.id); else next.add(a.id);
+                    return next;
+                  });
+                };
+                return (
+                  <div key={a.id} className="border rounded-lg text-sm overflow-hidden">
+                    <button
+                      onClick={toggleExpand}
+                      className="w-full flex items-center justify-between p-3 hover:bg-gray-50 transition"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs transition-transform ${isExpanded ? 'rotate-90' : ''}`}>▶</span>
+                        <span className="font-medium">Attempt {a.attempt_number}</span>
+                        {a.status === 'graded' && a.grade !== null && (
+                          <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">{a.grade}/{points}</span>
+                        )}
+                        {a.status === 'submitted' && (
+                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">Submitted</span>
+                        )}
+                      </div>
+                      <span className="text-xs text-gray-400">{new Date(a.submitted_at).toLocaleString()}</span>
+                    </button>
+                    {isExpanded && (
+                      <div className="px-4 pb-4 pt-1 border-t bg-gray-50 space-y-3">
+                        {a.text_content && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Answer</p>
+                            <div className="bg-white rounded-lg p-3 border text-sm text-gray-700 whitespace-pre-wrap">{a.text_content}</div>
+                          </div>
+                        )}
+                        {a.code_content && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Code {a.code_language && <span className="text-purple-600">({a.code_language})</span>}</p>
+                            <pre className="bg-[#1e1e2e] text-green-300 rounded-lg p-3 text-xs font-mono overflow-x-auto">{a.code_content}</pre>
+                          </div>
+                        )}
+                        {a.url && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">URL</p>
+                            <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline text-sm break-all">{a.url}</a>
+                          </div>
+                        )}
+                        {a.file && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">File</p>
+                            <a href={a.file} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-orange-500 hover:underline text-sm">📄 Download submission</a>
+                          </div>
+                        )}
+                        {a.feedback && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Instructor Feedback</p>
+                            <div className="bg-white rounded-lg p-3 border text-sm text-gray-700">{a.feedback}</div>
+                          </div>
+                        )}
+                        {a.auto_grade_result && (
+                          <div>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Test Results</p>
+                            <div className="bg-white rounded-lg p-3 border space-y-1">
+                              {a.auto_grade_result.tests.map((t, i) => (
+                                <div key={i} className="flex items-center gap-2 text-xs">
+                                  <span>{t.passed ? '✅' : '❌'}</span>
+                                  <span>{t.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  {a.grade !== null && <p className="text-green-600">Grade: {a.grade}/{points}</p>}
-                  {a.auto_grade_result && (
-                    <p className="text-xs text-gray-500">
-                      Tests: {a.auto_grade_result.passed}/{a.auto_grade_result.total} passed
-                    </p>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
