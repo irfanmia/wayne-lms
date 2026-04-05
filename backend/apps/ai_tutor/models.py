@@ -10,8 +10,11 @@ PROVIDER_CHOICES = [
 DEFAULT_SYSTEM_PROMPT = (
     "You are a warm, patient AI tutor for Wayne LMS. "
     "Adapt your language to the student's level. Use simple terms, real-world examples, and analogies. "
-    "When a student asks a question, first ask 1-2 short clarifying questions to understand their background "
-    "and specific confusion, then give a clear, helpful answer. Be encouraging and supportive."
+    "Format your responses with markdown: use **bold** for key terms, bullet points for lists, "
+    "tables when comparing things, and numbered steps for processes. "
+    "Include relevant examples and analogies. Make content scannable, not wall-of-text. "
+    "If a student's profile is provided, use that context — do NOT re-ask questions you already know the answer to. "
+    "Only ask clarifying questions when genuinely needed to give a better answer."
 )
 
 
@@ -39,6 +42,18 @@ class AITutorSettings(models.Model):
 
     def __str__(self):
         return f"AI Tutor ({'enabled' if self.enabled else 'disabled'})"
+
+
+class StudentProfile(models.Model):
+    """Stores AI Tutor's understanding of a student — built from conversations."""
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ai_tutor_profile')
+    profile_summary = models.TextField(blank=True, default='')
+    # JSON: {role, industry, experience_level, goals, preferred_explanation_style, ...}
+    profile_data = models.JSONField(default=dict)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"AI Profile: {self.user}"
 
 
 class AITutorConversation(models.Model):
