@@ -260,6 +260,7 @@ class CourseLearnSerializer(serializers.ModelSerializer):
         for module in obj.modules.all().prefetch_related('lessons__quiz', 'quizzes'):
             lessons = []
             for lesson in module.lessons.all():
+                assignment = lesson.assignments.first()
                 lessons.append({
                     'id': lesson.id,
                     'title': lesson.title,
@@ -267,6 +268,7 @@ class CourseLearnSerializer(serializers.ModelSerializer):
                     'duration': lesson.video_duration or f'{lesson.duration} min',
                     'video_url': lesson.video_url,
                     'quiz_id': lesson.quiz_id,
+                    'assignment_id': assignment.id if assignment else None,
                     'order': lesson.order,
                 })
             quiz = module.quizzes.first()
