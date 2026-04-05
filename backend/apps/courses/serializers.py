@@ -49,11 +49,16 @@ class QuizListSerializer(serializers.ModelSerializer):
 
 class LessonSerializer(serializers.ModelSerializer):
     quiz_id = serializers.PrimaryKeyRelatedField(source='quiz', read_only=True)
+    assignment_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Lesson
         fields = ['id', 'title', 'content', 'lesson_type', 'video_url',
-                  'video_duration', 'quiz_id', 'duration', 'order']
+                  'video_duration', 'quiz_id', 'assignment_id', 'duration', 'order']
+
+    def get_assignment_id(self, obj):
+        assignment = obj.assignments.first()
+        return assignment.id if assignment else None
 
 
 class LessonBriefSerializer(serializers.ModelSerializer):
