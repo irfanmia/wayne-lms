@@ -84,6 +84,7 @@ class CourseCreateUpdateSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['slug', 'title', 'description', 'category', 'level', 'price',
                   'is_free', 'thumbnail', 'duration', 'is_featured', 'status',
+                  'course_type', 'industry_meta',
                   'enable_certificates', 'enable_discussions', 'enable_drip',
                   'enable_points', 'enable_quizzes', 'enable_prerequisites',
                   'enable_assignments', 'enable_practice', 'enable_multi_instructor',
@@ -124,7 +125,8 @@ class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('id', 'slug', 'title', 'description', 'is_free', 'price', 'thumbnail',
-                  'category', 'duration', 'level', 'module_count', 'instructor', 'priceType', 'status', 'created_at')
+                  'category', 'duration', 'level', 'module_count', 'instructor', 'priceType',
+                  'status', 'course_type', 'created_at')
 
     def get_instructor(self, obj):
         if obj.instructor:

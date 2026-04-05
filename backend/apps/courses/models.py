@@ -7,9 +7,11 @@ class Course(models.Model):
     LEVEL_CHOICES = [('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced')]
     DRIP_TYPE_CHOICES = [('sequential', 'Sequential'), ('scheduled', 'Scheduled'), ('timed', 'Timed')]
     STATUS_CHOICES = [('draft', 'Draft'), ('published', 'Published'), ('archived', 'Archived')]
+    COURSE_TYPE_CHOICES = [('standard', 'Standard'), ('industry', 'Industry Implementation')]
 
     slug = models.SlugField(unique=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', db_index=True)
+    course_type = models.CharField(max_length=20, choices=COURSE_TYPE_CHOICES, default='standard')
     title = models.JSONField(default=dict)
     description = models.JSONField(default=dict)
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -21,6 +23,10 @@ class Course(models.Model):
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
     what_youll_learn = models.JSONField(default=list, blank=True)
     who_should_take = models.JSONField(default=dict, blank=True)
+    industry_meta = models.JSONField(
+        default=dict, blank=True,
+        help_text='For industry courses: {target_roles, workflows, tools, deliverables, roi_benefits}',
+    )
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

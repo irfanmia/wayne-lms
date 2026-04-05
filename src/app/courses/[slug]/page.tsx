@@ -15,7 +15,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   const { slug } = use(params);
   const { t, locale } = useI18n();
   const { isAuthenticated, isDemoMode } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'practice' | 'curriculum' | 'reviews' | 'live'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'implementation' | 'practice' | 'curriculum' | 'reviews' | 'live'>('overview');
   const [expandedModules, setExpandedModules] = useState<number[]>([0]);
   const [enrolling, setEnrolling] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
@@ -50,6 +50,8 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
           exercise_count: data.exercise_count || 0,
           video_duration: data.video_duration || '',
           priceType: data.priceType || data.price_type || (data.is_free ? 'free' : 'paid'),
+          course_type: data.course_type || 'standard',
+          industry_meta: data.industry_meta || {},
         };
         setCourse(mapped);
         setIsOffline(false);
@@ -166,11 +168,17 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   const whoShouldTake = tContentArray(course.whoShouldTake, locale);
   const prerequisites = tContentArray(course.prerequisites, locale);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const industryMeta = (course as any).industry_meta || {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isIndustryCourse = (course as any).course_type === 'industry' && Object.keys(industryMeta).length > 0;
+
   const related = staticCourses.filter(c => c.categorySlug === course.categorySlug && c.slug !== course.slug).slice(0, 3);
   const totalLessons = (course.curriculum || []).reduce((sum: number, m: { lessons: unknown[] }) => sum + m.lessons.length, 0);
 
   const tabLabels: Record<string, string> = {
     overview: t('courseDetail.overview'),
+    implementation: 'Implementation',
     curriculum: t('courseDetail.curriculum'),
     reviews: t('courseDetail.reviews'),
     live: '📡 Live Classes',
@@ -217,8 +225,8 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
           <div className="flex-1 min-w-0">
             {/* Tabs */}
             <div className="flex gap-1 border-b border-gray-200 mb-8">
-              {(['overview', 'curriculum', 'live', ...(course.enable_practice ? ['practice'] : []), 'reviews'] as const).map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 py-3 text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${activeTab === tab ? 'text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700'}`}>
+              {(['overview', ...(isIndustryCourse ? ['implementation'] : []), 'curriculum', 'live', ...((course as any).enable_practice ? ['practice'] : []), 'reviews'] as const).map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab as typeof activeTab)} className={`px-5 py-3 text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${activeTab === tab ? 'text-orange-600 border-b-2 border-orange-500' : 'text-gray-500 hover:text-gray-700'}`}>
                   {tabLabels[tab]}
                   {tab === 'live' && liveClasses.filter(lc => lc.status === 'live').length > 0 && (
                     <span className="ml-1.5 inline-flex items-center justify-center w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -229,6 +237,84 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
 
             {activeTab === 'overview' && (
               <div className="space-y-8">
+                {/* Industry course: outcome-focused overview blocks */}
+                {isIndustryCourse && (
+                  <>
+                    {/* Who This Is For */}
+                    {(industryMeta.target_roles || []).length > 0 && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                        <h2 className="text-xl font-medium text-gray-900 mb-3 font-heading">Who This Is For</h2>
+                        <div className="flex flex-wrap gap-2">
+                          {(industryMeta.target_roles as string[]).map((role: string, i: number) => (
+                            <span key={i} className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">{role}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Workflows You Will Implement */}
+                    {(industryMeta.workflows || []).length > 0 && (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+                        <h2 className="text-xl font-medium text-gray-900 mb-3 font-heading">Workflows You Will Implement</h2>
+                        <div className="space-y-2">
+                          {(industryMeta.workflows as string[]).map((wf: string, i: number) => (
+                            <div key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-200 text-emerald-800 flex items-center justify-center text-xs font-bold mt-0.5">{i + 1}</span>
+                              <span>{wf}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Tools You Will Set Up */}
+                      {(industryMeta.tools || []).length > 0 && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
+                          <h3 className="text-lg font-medium text-gray-900 mb-3 font-heading">Tools You Will Set Up</h3>
+                          <ul className="space-y-1.5">
+                            {(industryMeta.tools as string[]).map((tool: string, i: number) => (
+                              <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                                <span className="text-purple-500">&#9656;</span>{tool}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Deliverables You Leave With */}
+                      {(industryMeta.deliverables || []).length > 0 && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                          <h3 className="text-lg font-medium text-gray-900 mb-3 font-heading">Deliverables You Leave With</h3>
+                          <ul className="space-y-1.5">
+                            {(industryMeta.deliverables as string[]).map((d: string, i: number) => (
+                              <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                                <span className="text-amber-600">&#10003;</span>{d}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ROI / Benefits */}
+                    {(industryMeta.roi_benefits || []).length > 0 && (
+                      <div className="bg-orange-50 border border-orange-200 rounded-xl p-6">
+                        <h2 className="text-xl font-medium text-gray-900 mb-3 font-heading">Expected ROI &amp; Benefits</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {(industryMeta.roi_benefits as string[]).map((b: string, i: number) => (
+                            <div key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                              <span className="text-orange-500 mt-0.5">&#9650;</span>
+                              <span>{b}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* Standard: What you'll learn */}
                 {whatYouLearn.length > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
                   <h2 className="text-2xl font-medium text-gray-900 mb-4 font-heading">{t('courseDetail.whatYouLearn')}</h2>
@@ -243,7 +329,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
                 </div>
                 )}
 
-                {whoShouldTake.length > 0 && (
+                {whoShouldTake.length > 0 && !isIndustryCourse && (
                 <div>
                   <h2 className="text-2xl font-medium text-gray-900 mb-4 font-heading">{t('courseDetail.whoShouldTake')}</h2>
                   <ul className="space-y-2">
@@ -355,8 +441,64 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
               </div>
             )}
 
-            
-                {activeTab === 'practice' && course.enable_practice && (
+            {activeTab === 'implementation' && isIndustryCourse && (
+              <div className="space-y-8">
+                {/* Implementation Roadmap */}
+                {(industryMeta.workflows || []).length > 0 && (
+                  <div>
+                    <h2 className="text-2xl font-medium text-gray-900 mb-2 font-heading">Implementation Roadmap</h2>
+                    <p className="text-sm text-gray-500 mb-5">Follow these steps to implement AI workflows in your organization.</p>
+                    <div className="relative">
+                      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
+                      <div className="space-y-4">
+                        {(industryMeta.workflows as string[]).map((wf: string, i: number) => (
+                          <div key={i} className="relative flex items-start gap-4 pl-0">
+                            <div className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-bold">{i + 1}</div>
+                            <div className="bg-white border border-gray-200 rounded-xl p-4 flex-1 shadow-sm">
+                              <p className="text-sm font-medium text-gray-900">{wf}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Deliverables Breakdown */}
+                {(industryMeta.deliverables || []).length > 0 && (
+                  <div>
+                    <h2 className="text-2xl font-medium text-gray-900 mb-2 font-heading">What You Will Build</h2>
+                    <p className="text-sm text-gray-500 mb-5">Concrete outputs you can take back to work immediately.</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {(industryMeta.deliverables as string[]).map((d: string, i: number) => (
+                        <div key={i} className="flex items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">D{i + 1}</span>
+                          <span className="text-sm text-gray-700 font-medium">{d}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Tools Stack */}
+                {(industryMeta.tools || []).length > 0 && (
+                  <div>
+                    <h2 className="text-2xl font-medium text-gray-900 mb-2 font-heading">Tool Stack</h2>
+                    <p className="text-sm text-gray-500 mb-5">Tools and platforms covered in this course.</p>
+                    <div className="flex flex-wrap gap-2">
+                      {(industryMeta.tools as string[]).map((tool: string, i: number) => (
+                        <span key={i} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-purple-50 border border-purple-200 text-purple-800">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.1-5.1m0 0L11.42 5m-5.1 5.07h13.27" /></svg>
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+                {activeTab === 'practice' && (course as any).enable_practice && (
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800 mb-4">Practice Exercises</h2>
                     <p className="text-gray-500 mb-6">Hands-on exercises to reinforce what you learned in this course.</p>
