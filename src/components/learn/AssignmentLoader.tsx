@@ -8,14 +8,15 @@ interface Props {
   onComplete?: () => void;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default function AssignmentLoader({ assignmentId, onComplete }: Props) {
-  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     api.getAssignment(assignmentId)
-      .then((d: Record<string, unknown>) => {
+      .then((d: any) => {
         setData(d);
         setLoading(false);
       })
@@ -37,20 +38,22 @@ export default function AssignmentLoader({ assignmentId, onComplete }: Props) {
   return (
     <Assignment
       assignmentId={assignmentId}
-      title={data.title as string}
-      description={data.description as string}
-      submissionType={data.submission_type as string}
-      answerType={data.answer_type as string}
-      points={data.points as number}
-      dueDate={data.due_date as string}
-      programmingLanguage={data.programming_language as string}
-      starterCode={data.starter_code as string}
-      testCode={data.test_code as string}
-      rubric={data.rubric as string}
-      maxAttempts={data.max_attempts as number}
-      autoGrade={data.auto_grade as boolean}
-      allowedExtensions={data.allowed_extensions as string}
-      maxFileSize={data.max_file_size as number}
+      title={data.title}
+      description={data.description}
+      submissionType={data.submission_type}
+      answerType={data.answer_type}
+      points={data.points}
+      dueDate={data.due_date}
+      programmingLanguage={data.programming_language}
+      starterCode={data.starter_code}
+      testCode={data.test_code}
+      rubric={data.rubric}
+      maxAttempts={data.max_attempts}
+      autoGrade={data.auto_grade}
+      allowedExtensions={data.allowed_extensions}
+      maxFileSize={data.max_file_size}
+      submission={data.submission || null}
+      attemptsUsed={data.attempts_used || 0}
     />
   );
 }
