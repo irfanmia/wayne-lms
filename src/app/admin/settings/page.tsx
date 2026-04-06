@@ -60,11 +60,20 @@ export default function SettingsPage() {
 
   // AI Features state
   const [aiTutorEnabled, setAiTutorEnabled] = useState(false);
+  const [aiTutorExpanded, setAiTutorExpanded] = useState(false);
   const [aiProvider, setAiProvider] = useState('groq');
   const [aiModel, setAiModel] = useState('llama-3.3-70b-versatile');
   const [aiApiKey, setAiApiKey] = useState('');
   const [aiSystemPrompt, setAiSystemPrompt] = useState('');
   const [aiEmailNotifications, setAiEmailNotifications] = useState(true);
+
+  // Show/hide toggles for sensitive credential fields
+  const [showStripeSecret, setShowStripeSecret] = useState(false);
+  const [showPaypalSecret, setShowPaypalSecret] = useState(false);
+  const [showSmtpPass, setShowSmtpPass] = useState(false);
+  const [showSesSecret, setShowSesSecret] = useState(false);
+  const [showAiApiKey, setShowAiApiKey] = useState(false);
+  const [showIntegrationKeys, setShowIntegrationKeys] = useState<Record<number, boolean>>({});
 
   const showSuccess = (msg: string) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(''), 3000); };
 
@@ -173,7 +182,10 @@ export default function SettingsPage() {
                 {stripeEnabled && (
                   <div className="space-y-2">
                     <input value={stripeKey} onChange={e => setStripeKey(e.target.value)} placeholder="Publishable Key (pk_live_...)" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
-                    <input type="password" value={stripeSecret} onChange={e => setStripeSecret(e.target.value)} placeholder="Secret Key (sk_live_...)" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <div className="relative">
+                      <input type={showStripeSecret ? 'text' : 'password'} value={stripeSecret} onChange={e => setStripeSecret(e.target.value)} placeholder="Secret Key (sk_live_...)" className="w-full px-3 py-2 pr-16 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                      <button type="button" onClick={() => setShowStripeSecret(v => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-700 px-1">{showStripeSecret ? '🙈 Hide' : '👁 Show'}</button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -187,7 +199,10 @@ export default function SettingsPage() {
                 {paypalEnabled && (
                   <div className="space-y-2">
                     <input value={paypalClientId} onChange={e => setPaypalClientId(e.target.value)} placeholder="Client ID" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
-                    <input type="password" value={paypalSecret} onChange={e => setPaypalSecret(e.target.value)} placeholder="Secret" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <div className="relative">
+                      <input type={showPaypalSecret ? 'text' : 'password'} value={paypalSecret} onChange={e => setPaypalSecret(e.target.value)} placeholder="Secret" className="w-full px-3 py-2 pr-16 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                      <button type="button" onClick={() => setShowPaypalSecret(v => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-700 px-1">{showPaypalSecret ? '🙈 Hide' : '👁 Show'}</button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -206,14 +221,14 @@ export default function SettingsPage() {
                   <div><label className="text-sm text-gray-600 block mb-1">SMTP Host</label><input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
                   <div><label className="text-sm text-gray-600 block mb-1">Port</label><input value={smtpPort} onChange={e => setSmtpPort(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
                   <div><label className="text-sm text-gray-600 block mb-1">Username</label><input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
-                  <div><label className="text-sm text-gray-600 block mb-1">Password</label><input type="password" value={smtpPass} onChange={e => setSmtpPass(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
+                  <div><label className="text-sm text-gray-600 block mb-1">Password</label><div className="relative"><input type={showSmtpPass ? 'text' : 'password'} value={smtpPass} onChange={e => setSmtpPass(e.target.value)} className="w-full px-3 py-2 pr-16 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /><button type="button" onClick={() => setShowSmtpPass(v => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-700 px-1">{showSmtpPass ? '🙈 Hide' : '👁 Show'}</button></div></div>
                   <div><label className="text-sm text-gray-600 block mb-1">Encryption</label><select value={smtpEncryption} onChange={e => setSmtpEncryption(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"><option>TLS</option><option>SSL</option></select></div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div><label className="text-sm text-gray-600 block mb-1">Region</label><input value={sesRegion} onChange={e => setSesRegion(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
                   <div><label className="text-sm text-gray-600 block mb-1">Access Key</label><input value={sesAccessKey} onChange={e => setSesAccessKey(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
-                  <div className="col-span-2"><label className="text-sm text-gray-600 block mb-1">Secret Key</label><input type="password" value={sesSecretKey} onChange={e => setSesSecretKey(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /></div>
+                  <div className="col-span-2"><label className="text-sm text-gray-600 block mb-1">Secret Key</label><div className="relative"><input type={showSesSecret ? 'text' : 'password'} value={sesSecretKey} onChange={e => setSesSecretKey(e.target.value)} className="w-full px-3 py-2 pr-16 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" /><button type="button" onClick={() => setShowSesSecret(v => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-700 px-1">{showSesSecret ? '🙈 Hide' : '👁 Show'}</button></div></div>
                 </div>
               )}
               <div className="grid grid-cols-2 gap-4">
@@ -253,7 +268,16 @@ export default function SettingsPage() {
                     </button>
                   </div>
                   {intg.enabled && (
-                    <input value={intg.key} onChange={e => updateIntKey(idx, e.target.value)} placeholder={intg.placeholder} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <div className="relative">
+                      <input
+                        type={showIntegrationKeys[idx] ? 'text' : 'password'}
+                        value={intg.key}
+                        onChange={e => updateIntKey(idx, e.target.value)}
+                        placeholder={intg.placeholder}
+                        className="w-full px-3 py-2 pr-16 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <button type="button" onClick={() => setShowIntegrationKeys(prev => ({ ...prev, [idx]: !prev[idx] }))} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-700 px-1">{showIntegrationKeys[idx] ? '🙈 Hide' : '👁 Show'}</button>
+                    </div>
                   )}
                 </div>
               ))}
@@ -269,8 +293,9 @@ export default function SettingsPage() {
             </div>
 
             {/* AI Tutor — active product */}
-            <div className="p-5 border-2 border-orange-300 bg-orange-50/50 rounded-xl">
-              <div className="flex items-center justify-between mb-3">
+            <div className="border-2 border-orange-300 bg-orange-50/50 rounded-xl overflow-hidden">
+              {/* Header row — always visible */}
+              <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🤖</span>
                   <div>
@@ -278,15 +303,29 @@ export default function SettingsPage() {
                     <p className="text-xs text-gray-500">Context-aware chat tutor on every lesson</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setAiTutorEnabled(!aiTutorEnabled)}
-                  className={`w-12 h-6 rounded-full transition-colors ${aiTutorEnabled ? 'bg-orange-500' : 'bg-gray-300'} relative`}
-                >
-                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${aiTutorEnabled ? 'left-6' : 'left-0.5'}`} />
-                </button>
+                <div className="flex items-center gap-3">
+                  {/* Enable/disable toggle */}
+                  <button
+                    onClick={() => setAiTutorEnabled(!aiTutorEnabled)}
+                    className={`w-12 h-6 rounded-full transition-colors ${aiTutorEnabled ? 'bg-orange-500' : 'bg-gray-300'} relative`}
+                  >
+                    <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${aiTutorEnabled ? 'left-6' : 'left-0.5'}`} />
+                  </button>
+                  {/* Expand/collapse settings */}
+                  <button
+                    onClick={() => setAiTutorExpanded(v => !v)}
+                    className="text-xs text-gray-500 hover:text-orange-600 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-orange-100 transition"
+                    title={aiTutorExpanded ? 'Collapse settings' : 'Configure'}
+                  >
+                    <span>{aiTutorExpanded ? '▲' : '▼'}</span>
+                    <span>{aiTutorExpanded ? 'Collapse' : 'Configure'}</span>
+                  </button>
+                </div>
               </div>
-              {aiTutorEnabled && (
-                <div className="space-y-4 mt-4 pt-4 border-t border-orange-200">
+
+              {/* Collapsible settings body */}
+              {aiTutorExpanded && (
+                <div className="space-y-4 px-5 pb-5 pt-2 border-t border-orange-200">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">AI Provider</label>
@@ -306,7 +345,18 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">API Key</label>
-                    <input type="password" value={aiApiKey} onChange={e => setAiApiKey(e.target.value)} placeholder="Enter API key..." className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <div className="relative">
+                      <input
+                        type={showAiApiKey ? 'text' : 'password'}
+                        value={aiApiKey}
+                        onChange={e => setAiApiKey(e.target.value)}
+                        placeholder="Enter API key..."
+                        className="w-full px-3 py-2 pr-16 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <button type="button" onClick={() => setShowAiApiKey(v => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-700 px-1">
+                        {showAiApiKey ? '🙈 Hide' : '👁 Show'}
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">System Prompt</label>
