@@ -441,3 +441,60 @@ class LessonAdminViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save()
+
+
+# ─── Admin Quiz ViewSets ───
+
+class QuizAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get_serializer_class(self):
+        from .serializers import QuizSerializer
+        return QuizSerializer
+
+    def get_queryset(self):
+        lesson_pk = self.kwargs.get('lesson_pk')
+        course_slug = self.kwargs.get('course_slug')
+        if lesson_pk:
+            return Quiz.objects.filter(module__course__slug=course_slug)
+        return Quiz.objects.filter(course__slug=course_slug)
+
+    def perform_create(self, serializer):
+        course_slug = self.kwargs.get('course_slug')
+        from .models import Course
+        course = Course.objects.get(slug=course_slug)
+        title = self.request.data.get('title', {'en': 'New Quiz'})
+        passing_grade = int(self.request.data.get('passing_grade', 70))
+        time_limit = self.request.data.get('time_limit')
+        max_retakes = self.request.data.get('max_retakes')
+        randomize = self.request.data.get('randomize_questions', False)
+        show_correct = self.request.data.get('show_correct_answers', True)
+        serializer.save(
+            course=course, title=title,
+            passing_grade=passing_grade,
+            time_limit=int(time_limit) if time_limit else None,
+            max_retakes=int(max_retakes) if max_retakes else None,
+            randomize_questions=bool(randomize),
+            show_correct_answers=bool(show_correct),
+        )
+
+
+class QuestionAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get_serializer_class(self):
+        from .serializers import QuestionWithAnswerSerializer
+        return QuestionWithAnswerSerializer
+
+    def get_queryset(self):
+        quiz_pk = self.kwargs.get('quiz_pk')
+        return Question.objects.filter(quiz_id=quiz_pk).order_by('order')
+
+    def perform_create(self, serializer):
+        quiz_pk = self.kwargs['quiz_pk']
+        last_order = Question.objects.filter(quiz_id=quiz_pk).count()
+        question_type = self.request.data.get('question_type', 'single_choice')
+        text = self.request.data.get('text', 'New Question')
+        serializer.save(quiz_id=quiz_pk, order=last_order, question_type=question_type, text=text)

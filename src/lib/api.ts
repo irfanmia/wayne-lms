@@ -287,11 +287,11 @@ class ApiClient {
   async createContentLesson(data: Record<string, unknown>) {
     return this.request('/content-library/lessons/', { method: 'POST', body: JSON.stringify(data) });
   }
-  async getQuizzes(params?: Record<string, string>) {
+  async getContentQuizzes(params?: Record<string, string>) {
     const query = params ? '?' + new URLSearchParams(params).toString() : '';
     return this.request(`/content-library/quizzes/${query}`);
   }
-  async createQuiz(data: Record<string, unknown>) {
+  async createContentQuiz(data: Record<string, unknown>) {
     return this.request('/content-library/quizzes/', { method: 'POST', body: JSON.stringify(data) });
   }
   async getAssignmentsList(params?: Record<string, string>) {
@@ -439,6 +439,15 @@ class ApiClient {
   // Categories
   async getCategories() { return this.request('/courses/categories/'); }
   async createCategory(data: Record<string, unknown>) { return this.request('/courses/categories/', { method: 'POST', body: JSON.stringify(data) }); }
+
+  // Admin Quiz
+  async getQuizzes(courseSlug: string) { return this.request(`/courses/${courseSlug}/quizzes/`); }
+  async createQuiz(courseSlug: string, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/quizzes/`, { method: 'POST', body: JSON.stringify(data) }); }
+  async updateQuiz(courseSlug: string, quizId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/quizzes/${quizId}/`, { method: 'PATCH', body: JSON.stringify(data) }); }
+  async deleteQuiz(courseSlug: string, quizId: number) { return this.request(`/courses/${courseSlug}/quizzes/${quizId}/`, { method: 'DELETE' }); }
+  async createQuestion(courseSlug: string, quizId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/quizzes/${quizId}/questions/`, { method: 'POST', body: JSON.stringify(data) }); }
+  async updateQuestion(courseSlug: string, quizId: number, qId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/quizzes/${quizId}/questions/${qId}/`, { method: 'PATCH', body: JSON.stringify(data) }); }
+  async deleteQuestion(courseSlug: string, quizId: number, qId: number) { return this.request(`/courses/${courseSlug}/quizzes/${quizId}/questions/${qId}/`, { method: 'DELETE' }); }
 
   // Admin Curriculum (modules + lessons)
   async getModules(courseSlug: string) {

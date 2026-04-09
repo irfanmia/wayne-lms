@@ -5,6 +5,7 @@ import VideoLessonEditor from './VideoLessonEditor';
 import QuizEditor from './QuizEditor';
 import AssignmentEditor from './AssignmentEditor';
 import ExerciseEditor from './ExerciseEditor';
+import AudioLessonEditor from './AudioLessonEditor';
 
 interface Props {
   itemId: string | null;
@@ -68,9 +69,9 @@ export default function LessonEditor({ itemId, itemType, itemTitle, courseSlug, 
   switch (itemType) {
     case 'text': return <TextLessonEditor title={itemTitle} {...saveProps} />;
     case 'video': return <VideoLessonEditor title={itemTitle} {...saveProps} />;
-    case 'quiz': return <QuizEditor title={itemTitle} />;
+    case 'quiz': return <QuizEditor title={itemTitle} courseSlug={courseSlug} moduleId={moduleId || ''} lessonId={itemId || ''} onTitleChange={onTitleChange} />;
     case 'assignment': return <AssignmentEditor title={itemTitle} />;
-    case 'audio': return <GenericLessonEditor title={itemTitle} type="audio" sourceLabel="Audio URL" placeholder="Enter audio file URL..." {...saveProps} />;
+    case 'audio': return <AudioLessonEditor title={itemTitle} {...saveProps} />;
     case 'slides': return <GenericLessonEditor title={itemTitle} type="slides" sourceLabel="Slides URL" placeholder="Enter Google Slides or PDF URL..." {...saveProps} />;
     case 'stream': return <GenericLessonEditor title={itemTitle} type="stream" sourceLabel="Stream URL" placeholder="Enter live stream URL..." {...saveProps} />;
     case 'exercise': return <ExerciseEditor title={itemTitle} />;

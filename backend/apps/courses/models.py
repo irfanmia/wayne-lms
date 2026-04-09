@@ -19,6 +19,8 @@ class Course(models.Model):
     is_free = models.BooleanField(default=True)
     thumbnail = models.URLField(blank=True)
     category = models.CharField(max_length=100, blank=True)
+    category_fk = models.ForeignKey("Category", on_delete=models.SET_NULL, null=True, blank=True, related_name="courses")
+    sub_category_fk = models.ForeignKey("Category", on_delete=models.SET_NULL, null=True, blank=True, related_name="sub_courses")
     duration = models.PositiveIntegerField(help_text='Duration in minutes', default=0)
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
     what_youll_learn = models.JSONField(default=list, blank=True)
@@ -80,7 +82,7 @@ class Module(models.Model):
 
 class Lesson(models.Model):
     LESSON_TYPE_CHOICES = [
-        ('video', 'Video'), ('text', 'Text'), ('quiz', 'Quiz'),
+        ('video', 'Video'), ('text', 'Text'), ('audio', 'Audio'), ('quiz', 'Quiz'),
         ('exercise', 'Exercise'), ('slides', 'Slides'), ('stream', 'Stream'),
         ('assignment', 'Assignment'),
     ]
@@ -443,3 +445,19 @@ class CourseInstructor(models.Model):
 
     def __str__(self):
         return f"{self.instructor} - {self.course} ({self.role})"
+
+
+# ─── Category Model ───
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+    icon = models.CharField(max_length=50, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subcategories')
+
+    class Meta:
+        verbose_name_plural = 'categories'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name

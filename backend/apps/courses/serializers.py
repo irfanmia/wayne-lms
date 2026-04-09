@@ -54,7 +54,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ['id', 'title', 'content', 'lesson_type', 'video_url', 'video_source',
-                  'video_duration', 'quiz_id', 'assignment_id', 'duration', 'order', 'is_free_preview']
+                  'video_duration', 'audio_url', 'quiz_id', 'assignment_id', 'duration', 'order', 'is_free_preview']
 
     def get_assignment_id(self, obj):
         assignment = obj.assignments.first()

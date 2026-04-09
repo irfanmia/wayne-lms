@@ -46,7 +46,7 @@ export default function ContentLibraryPage() {
 
     Promise.all([
       api.getLessons(),
-      api.getQuizzes(),
+      api.getContentQuizzes(),
       api.getAssignmentsList(),
     ]).then(([lessonsRes, quizzesRes, assignmentsRes]) => {
       const updated = { ...emptyContent };

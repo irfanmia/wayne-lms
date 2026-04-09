@@ -137,26 +137,105 @@ function RichTextEditor({ value, onChange, minHeight = '200px', placeholder = ''
   // Only set initial content, don't re-render on every keystroke
   React.useEffect(() => {
     if (editorRef.current && value && !editorRef.current.innerText.trim()) {
-      editorRef.current.innerText = value;
-      setWordCount(value.split(/\s+/).filter(Boolean).length);
+      // If value contains HTML tags, restore as innerHTML (preserves formatting)
+      if (/<[a-z]/.test(value)) {
+        editorRef.current.innerHTML = value;
+      } else {
+        editorRef.current.innerText = value;
+      }
+      setWordCount(editorRef.current.innerText.split(/\s+/).filter(Boolean).length);
     }
   }, [value]);
 
   return (
     <div className="border rounded-lg overflow-hidden bg-white">
       <RichTextToolbar editorRef={editorRef} />
+      <style>{`
+        [contenteditable] pre.code-block {
+          background: #1e1e2e;
+          color: #cdd6f4;
+          border-radius: 8px;
+          padding: 12px 16px;
+          font-family: 'Fira Code', 'Cascadia Code', monospace;
+          font-size: 13px;
+          line-height: 1.6;
+          overflow-x: auto;
+          margin: 8px 0;
+          border-left: 4px solid #89b4fa;
+          white-space: pre;
+        }
+        [contenteditable] code:not(pre code) {
+          background: #eff1f5;
+          color: #e64553;
+          border-radius: 4px;
+          padding: 1px 6px;
+          font-family: monospace;
+          font-size: 0.9em;
+        }
+        [contenteditable] p { margin: 0 0 8px; }
+        [contenteditable] h1,h2,h3 { font-weight: 700; margin: 12px 0 6px; }
+        [contenteditable] ul,ol { padding-left: 20px; margin: 8px 0; }
+        [contenteditable] blockquote { border-left: 3px solid #e57c0b; padding-left: 12px; color: #888; margin: 8px 0; }
+        [contenteditable] strong { font-weight: 700; }
+        [contenteditable] em { font-style: italic; }
+      `}</style>
       <div className="relative">
         <div
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
           dir="ltr"
-          className="p-4 focus:outline-none text-sm text-gray-800 leading-relaxed"
+          className="p-4 focus:outline-none text-sm text-gray-800 leading-relaxed prose prose-sm max-w-none"
           style={{ minHeight, direction: 'ltr' }}
           onInput={e => {
-            const text = (e.target as HTMLDivElement).innerText;
-            onChange(text);
-            setWordCount(text.split(/\s+/).filter(Boolean).length);
+            const el = e.target as HTMLDivElement;
+            onChange(el.innerHTML);
+            setWordCount(el.innerText.split(/\s+/).filter(Boolean).length);
+          }}
+          onPaste={e => {
+            e.preventDefault();
+            const clipData = e.clipboardData;
+            // Try to get HTML first (preserves formatting from Word, Notion, web)
+            const html = clipData.getData('text/html');
+            const plain = clipData.getData('text/plain');
+
+            if (html && html.trim()) {
+              // Sanitise pasted HTML: keep bold/italic/code/pre/lists/headings, strip scripts/styles
+              const tmp = document.createElement('div');
+              tmp.innerHTML = html;
+              // Remove script, style, iframe elements
+              tmp.querySelectorAll('script,style,iframe,meta,link').forEach(el => el.remove());
+              // Strip class/style attrs that don't relate to code
+              tmp.querySelectorAll('*').forEach(el => {
+                const tag = el.tagName.toLowerCase();
+                if (!['pre','code'].includes(tag)) {
+                  el.removeAttribute('style');
+                  el.removeAttribute('class');
+                }
+              });
+              document.execCommand('insertHTML', false, tmp.innerHTML);
+            } else if (plain) {
+              // Plain text: detect code blocks (indented 4+ spaces, or fenced ```)
+              const lines = plain.split('\n');
+              let inCode = false;
+              let result = '';
+              for (const line of lines) {
+                if (line.startsWith('```') || line.startsWith('~~~')) {
+                  if (!inCode) { result += '<pre class="code-block"><code>'; inCode = true; }
+                  else { result += '</code></pre>'; inCode = false; }
+                } else if (inCode) {
+                  result += line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '\n';
+                } else if (/^    /.test(line) && lines.some(l => /^    /.test(l))) {
+                  result += `<pre class="code-block"><code>${line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/^    /,'')}</code></pre>`;
+                } else {
+                  result += `<p>${line || '<br>'}</p>`;
+                }
+              }
+              if (inCode) result += '</code></pre>';
+              document.execCommand('insertHTML', false, result);
+            }
+            const el = editorRef.current;
+            if (el) { onChange(el.innerHTML); setWordCount(el.innerText.split(/\s+/).filter(Boolean).length); }
           }}
           data-placeholder={placeholder}
         />
@@ -206,7 +285,7 @@ export default function TextLessonEditor({ title: initialTitle, courseSlug, modu
     try {
       await api.updateLesson(courseSlug, mid, lid, {
         title: { en: title },
-        content: { en: lessonContent },
+        content: { en: lessonContent },  // stores innerHTML
         duration: parseInt(duration) || 0,
         is_free_preview: isPreview,
       });
