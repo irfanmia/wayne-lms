@@ -152,7 +152,7 @@ export default function CourseBuilderLayout({ children, slug }: { children: Reac
 
   return (
     <CourseBuilderContext.Provider value={{ isNewCourse, isSaved, courseName, courseCategory, courseData, courseLoading, courseError, setCourseName, setCourseCategory, setCourseData, markSaved, saveCourse }}>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex-1 bg-gray-50 flex flex-col">
         {/* Top Navigation Bar */}
         <div className="bg-gray-900 text-white sticky top-0 z-50 shadow-lg">
           <div className="flex items-center h-14 px-4 gap-4">
