@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { lessonTypeConfig } from '@/data/mockCourseBuilder';
+import api from '@/lib/api';
 
 type LessonType = 'text' | 'video' | 'audio' | 'slides' | 'stream' | 'quiz' | 'assignment' | 'exercise';
 
@@ -22,6 +23,7 @@ interface Section {
 import SearchMaterialsModal from './SearchMaterialsModal';
 
 interface Props {
+  courseSlug: string;
   sections: Section[];
   setSections: (s: Section[]) => void;
   selectedItemId: string | null;
@@ -30,11 +32,12 @@ interface Props {
 
 const lessonTypes: LessonType[] = ['text', 'video', 'audio', 'slides', 'stream', 'quiz', 'assignment', 'exercise'];
 
-export default function CurriculumSidebar({ sections, setSections, selectedItemId, onSelectItem }: Props) {
+export default function CurriculumSidebar({ courseSlug, sections, setSections, selectedItemId, onSelectItem }: Props) {
   const [showSearch, setShowSearch] = useState(false);
   const [addDropdownSection, setAddDropdownSection] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [allCollapsed, setAllCollapsed] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const toggleSection = (id: string) => {
     setSections(sections.map(s => s.id === id ? { ...s, isExpanded: !s.isExpanded } : s));
@@ -46,29 +49,88 @@ export default function CurriculumSidebar({ sections, setSections, selectedItemI
     setAllCollapsed(newState);
   };
 
-  const addLesson = (sectionId: string, type: LessonType) => {
+  const addLesson = async (sectionId: string, type: LessonType) => {
     const cfg = lessonTypeConfig[type];
-    const newItem = { id: `item-${Date.now()}`, type, title: `New ${cfg.label}`, duration: '0 min' };
-    setSections(sections.map(s => s.id === sectionId ? { ...s, items: [...s.items, newItem], isExpanded: true } : s));
+    const moduleId = parseInt(sectionId);
     setAddDropdownSection(null);
-    onSelectItem(newItem.id, type);
+    setSaving(true);
+    try {
+      const result = await api.createLesson(courseSlug, moduleId, {
+        title: { en: `New ${cfg.label}` },
+        lesson_type: type,
+      });
+      const newItem: LessonItem = {
+        id: String(result.id),
+        type,
+        title: result.title?.en || result.title || `New ${cfg.label}`,
+        duration: result.duration ? `${result.duration} min` : '0 min',
+      };
+      setSections(sections.map(s =>
+        s.id === sectionId ? { ...s, items: [...s.items, newItem], isExpanded: true } : s
+      ));
+      onSelectItem(newItem.id, type);
+    } catch (e) {
+      console.error('Failed to create lesson', e);
+      alert('Failed to create lesson. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const addSection = () => {
-    const newSection: Section = { id: `sec-${Date.now()}`, title: 'New Section', isExpanded: true, items: [] };
-    setSections([...sections, newSection]);
+  const addSection = async () => {
+    setSaving(true);
+    try {
+      const result = await api.createModule(courseSlug, { title: { en: 'New Section' } });
+      const newSection: Section = {
+        id: String(result.id),
+        title: result.title?.en || result.title || 'New Section',
+        isExpanded: true,
+        items: [],
+      };
+      setSections([...sections, newSection]);
+    } catch (e) {
+      console.error('Failed to create section', e);
+      alert('Failed to create section. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const renameSection = (id: string, title: string) => {
+  const renameSection = async (id: string, title: string) => {
     setSections(sections.map(s => s.id === id ? { ...s, title } : s));
+    const moduleId = parseInt(id);
+    if (!isNaN(moduleId)) {
+      try {
+        await api.updateModule(courseSlug, moduleId, { title: { en: title } });
+      } catch (e) {
+        console.error('Failed to rename section', e);
+      }
+    }
   };
 
-  const deleteSection = (id: string) => {
+  const deleteSection = async (id: string) => {
     setSections(sections.filter(s => s.id !== id));
+    const moduleId = parseInt(id);
+    if (!isNaN(moduleId)) {
+      try {
+        await api.deleteModule(courseSlug, moduleId);
+      } catch (e) {
+        console.error('Failed to delete section', e);
+      }
+    }
   };
 
-  const deleteItem = (sectionId: string, itemId: string) => {
+  const deleteItem = async (sectionId: string, itemId: string) => {
     setSections(sections.map(s => s.id === sectionId ? { ...s, items: s.items.filter(i => i.id !== itemId) } : s));
+    const moduleId = parseInt(sectionId);
+    const lessonId = parseInt(itemId);
+    if (!isNaN(moduleId) && !isNaN(lessonId)) {
+      try {
+        await api.deleteLesson(courseSlug, moduleId, lessonId);
+      } catch (e) {
+        console.error('Failed to delete lesson', e);
+      }
+    }
   };
 
   return (
@@ -141,9 +203,10 @@ export default function CurriculumSidebar({ sections, setSections, selectedItemI
                     <div className="relative flex-1">
                       <button
                         onClick={e => { e.stopPropagation(); setAddDropdownSection(addDropdownSection === section.id ? null : section.id); }}
-                        className="w-full text-xs text-gray-400 hover:text-orange-500 py-1.5 rounded hover:bg-orange-50 transition flex items-center justify-center gap-1"
+                        disabled={saving}
+                        className="w-full text-xs text-gray-400 hover:text-orange-500 py-1.5 rounded hover:bg-orange-50 transition flex items-center justify-center gap-1 disabled:opacity-50"
                       >
-                        ➕ Add a lesson
+                        {saving ? '⏳ Adding…' : '➕ Add a lesson'}
                       </button>
                       {addDropdownSection === section.id && (
                         <div className="absolute left-0 top-full mt-1 bg-white rounded-lg shadow-xl border py-1 z-40 w-48">
@@ -178,8 +241,8 @@ export default function CurriculumSidebar({ sections, setSections, selectedItemI
 
         {/* New Section Button */}
         <div className="p-3 border-t border-gray-100">
-          <button onClick={addSection} className="w-full py-2 text-sm text-orange-500 hover:bg-orange-50 rounded-lg transition font-medium">
-            ➕ New section
+          <button onClick={addSection} disabled={saving} className="w-full py-2 text-sm text-orange-500 hover:bg-orange-50 rounded-lg transition font-medium disabled:opacity-50">
+            {saving ? '⏳ Creating…' : '➕ New section'}
           </button>
         </div>
       </div>

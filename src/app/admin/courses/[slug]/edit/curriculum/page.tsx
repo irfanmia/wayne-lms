@@ -24,6 +24,7 @@ interface Section {
 
 export default function CurriculumPage() {
   const { courseData } = useCourseBuilder();
+  const courseSlug = courseData?.slug || '';
   const [sections, setSections] = useState<Section[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [selectedItemType, setSelectedItemType] = useState<LessonType | null>(null);
@@ -83,6 +84,7 @@ export default function CurriculumPage() {
   return (
     <div className="flex h-[calc(100vh-56px)]">
       <CurriculumSidebar
+        courseSlug={courseSlug}
         sections={sections}
         setSections={setSections}
         selectedItemId={selectedItemId}

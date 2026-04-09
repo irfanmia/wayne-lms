@@ -427,6 +427,15 @@ class ApiClient {
   async getCategories() { return this.request('/courses/categories/'); }
   async createCategory(data: Record<string, unknown>) { return this.request('/courses/categories/', { method: 'POST', body: JSON.stringify(data) }); }
 
+  // Admin Curriculum (modules + lessons)
+  async getModules(courseSlug: string) { return this.request(`/courses/${courseSlug}/modules/`); }
+  async createModule(courseSlug: string, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/modules/`, { method: 'POST', body: JSON.stringify(data) }); }
+  async updateModule(courseSlug: string, moduleId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/`, { method: 'PATCH', body: JSON.stringify(data) }); }
+  async deleteModule(courseSlug: string, moduleId: number) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/`, { method: 'DELETE' }); }
+  async createLesson(courseSlug: string, moduleId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/lessons/`, { method: 'POST', body: JSON.stringify(data) }); }
+  async updateLesson(courseSlug: string, moduleId: number, lessonId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/lessons/${lessonId}/`, { method: 'PATCH', body: JSON.stringify(data) }); }
+  async deleteLesson(courseSlug: string, moduleId: number, lessonId: number) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/lessons/${lessonId}/`, { method: 'DELETE' }); }
+
   // Prerequisites
   async getCoursePrerequisites(slug: string) { return this.request(`/courses/${slug}/prerequisites/`); }
 
