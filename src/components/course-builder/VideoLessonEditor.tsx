@@ -20,6 +20,7 @@ export default function VideoLessonEditor({ title: initialTitle, courseSlug, mod
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+  const [toast, setToast] = useState('');
 
   const handleSave = async () => {
     const mid = parseInt(moduleId || '');
@@ -36,16 +37,23 @@ export default function VideoLessonEditor({ title: initialTitle, courseSlug, mod
         is_free_preview: isPreview,
       });
       setSaveStatus('saved');
+      setToast('✓ Lesson saved successfully');
       onTitleChange?.(title);
-      setTimeout(() => setSaveStatus('idle'), 2500);
+      setTimeout(() => { setSaveStatus('idle'); setToast(''); }, 2500);
     } catch {
       setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 3000);
+      setToast('✗ Failed to save lesson');
+      setTimeout(() => { setSaveStatus('idle'); setToast(''); }, 3000);
     } finally { setSaving(false); }
   };
 
   return (
     <div className="p-6 w-[70%] mx-auto">
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-xl text-sm font-medium text-white ${
+          saveStatus === 'saved' ? 'bg-green-500' : 'bg-red-500'
+        }`}>{toast}</div>
+      )}
       <div className="flex items-center gap-3 mb-4">
         <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">VIDEO LESSON</span>
       </div>

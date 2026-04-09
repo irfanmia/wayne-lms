@@ -195,6 +195,7 @@ export default function TextLessonEditor({ title: initialTitle, courseSlug, modu
   const [lessonContent, setLessonContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+  const [toast, setToast] = useState('');
 
   const handleSave = async () => {
     const mid = parseInt(moduleId || '');
@@ -210,11 +211,13 @@ export default function TextLessonEditor({ title: initialTitle, courseSlug, modu
         is_free_preview: isPreview,
       });
       setSaveStatus('saved');
+      setToast('✓ Lesson saved successfully');
       onTitleChange?.(title);
-      setTimeout(() => setSaveStatus('idle'), 2500);
+      setTimeout(() => { setSaveStatus('idle'); setToast(''); }, 2500);
     } catch {
       setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 3000);
+      setToast('✗ Failed to save lesson');
+      setTimeout(() => { setSaveStatus('idle'); setToast(''); }, 3000);
     } finally {
       setSaving(false);
     }
@@ -222,6 +225,14 @@ export default function TextLessonEditor({ title: initialTitle, courseSlug, modu
 
   return (
     <div className="p-6 w-[70%] mx-auto">
+      {/* Save toast notification */}
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-xl text-sm font-medium text-white transition-all ${
+          saveStatus === 'saved' ? 'bg-green-500' : 'bg-red-500'
+        }`}>
+          {toast}
+        </div>
+      )}
       {/* Type Badge + Title + Save */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3 flex-1">
