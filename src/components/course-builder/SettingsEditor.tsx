@@ -496,11 +496,15 @@ export default function SettingsEditor() {
                     const file = e.target.files?.[0];
                     if (!file) return;
                     setImageUploading(true);
+                    setErrors(prev => ({ ...prev, image: '' }));
                     try {
                       const res = await api.uploadMedia(file, 'course-images');
-                      setCourseImage(res.file);
+                      // res.file may be a relative path — prefix with API base so it loads from the server
+                      const apiBase = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api/v1', '').replace('/api', '');
+                      const url = res.file.startsWith('http') ? res.file : `${apiBase}${res.file}`;
+                      setCourseImage(url);
                     } catch (err) {
-                      setErrors({ save: 'Image upload failed' });
+                      setErrors(prev => ({ ...prev, image: 'Image upload failed. Please try again.' }));
                     } finally {
                       setImageUploading(false);
                     }
@@ -514,6 +518,9 @@ export default function SettingsEditor() {
                     </>
                   )}
                 </label>
+              )}
+              {errors.image && (
+                <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><span>❌</span>{errors.image}</p>
               )}
             </Field>
 
@@ -666,7 +673,9 @@ export default function SettingsEditor() {
                   const sizeStr = f.size < 1024 * 1024 ? `${(f.size / 1024).toFixed(1)} KB` : `${(f.size / (1024 * 1024)).toFixed(1)} MB`;
                   try {
                     const res = await api.uploadMedia(f, 'course-files');
-                    setCourseFiles(prev => [...prev, { name: f.name, size: sizeStr, url: res.file }]);
+                    const _base = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api/v1', '').replace('/api', '');
+                    const fileUrl = res.file.startsWith('http') ? res.file : `${_base}${res.file}`;
+                    setCourseFiles(prev => [...prev, { name: f.name, size: sizeStr, url: fileUrl }]);
                   } catch { setCourseFiles(prev => [...prev, { name: f.name, size: 'Upload failed' }]); }
                 }
                 setFilesUploading(false);
@@ -686,7 +695,9 @@ export default function SettingsEditor() {
                     const sizeStr = f.size < 1024 * 1024 ? `${(f.size / 1024).toFixed(1)} KB` : `${(f.size / (1024 * 1024)).toFixed(1)} MB`;
                     try {
                       const res = await api.uploadMedia(f, 'course-files');
-                      setCourseFiles(prev => [...prev, { name: f.name, size: sizeStr, url: res.file }]);
+                      const _base = (process.env.NEXT_PUBLIC_API_URL || '').replace('/api/v1', '').replace('/api', '');
+                      const fileUrl = res.file.startsWith('http') ? res.file : `${_base}${res.file}`;
+                      setCourseFiles(prev => [...prev, { name: f.name, size: sizeStr, url: fileUrl }]);
                     } catch { setCourseFiles(prev => [...prev, { name: f.name, size: 'Upload failed' }]); }
                   }
                   setFilesUploading(false);
