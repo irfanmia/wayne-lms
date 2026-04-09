@@ -28,6 +28,7 @@ export default function CurriculumPage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [selectedItemType, setSelectedItemType] = useState<LessonType | null>(null);
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
   // Populate sections from course data
   useEffect(() => {
@@ -68,9 +69,15 @@ export default function CurriculumPage() {
 
   const selectedItem = sections.flatMap(s => s.items).find(i => i.id === selectedItemId);
 
-  const handleSelectItem = (id: string, type: LessonType) => {
+  const handleSelectItem = (id: string, type: LessonType, moduleId?: string) => {
     setSelectedItemId(id);
     setSelectedItemType(type);
+    if (moduleId) setSelectedModuleId(moduleId);
+    else {
+      // find which section contains this item
+      const section = sections.find(s => s.items.some(i => i.id === id));
+      if (section) setSelectedModuleId(section.id);
+    }
   };
 
   if (!courseData) {
@@ -95,6 +102,15 @@ export default function CurriculumPage() {
           itemId={selectedItemId}
           itemType={selectedItemType}
           itemTitle={selectedItem?.title || ''}
+          courseSlug={courseSlug}
+          moduleId={selectedModuleId}
+          onTitleChange={(newTitle) => {
+            if (!selectedItemId) return;
+            setSections(prev => prev.map(s => ({
+              ...s,
+              items: s.items.map(i => i.id === selectedItemId ? { ...i, title: newTitle } : i)
+            })));
+          }}
         />
       </div>
     </div>

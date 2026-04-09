@@ -27,7 +27,7 @@ interface Props {
   sections: Section[];
   setSections: (s: Section[]) => void;
   selectedItemId: string | null;
-  onSelectItem: (id: string, type: LessonType) => void;
+  onSelectItem: (id: string, type: LessonType, moduleId?: string) => void;
 }
 
 const lessonTypes: LessonType[] = ['text', 'video', 'audio', 'slides', 'stream', 'quiz', 'assignment', 'exercise'];
@@ -68,7 +68,7 @@ export default function CurriculumSidebar({ courseSlug, sections, setSections, s
       setSections(sections.map(s =>
         s.id === sectionId ? { ...s, items: [...s.items, newItem], isExpanded: true } : s
       ));
-      onSelectItem(newItem.id, type);
+      onSelectItem(newItem.id, type, sectionId);
     } catch (e) {
       console.error('Failed to create lesson', e);
       alert('Failed to create lesson. Please try again.');
@@ -181,7 +181,7 @@ export default function CurriculumSidebar({ courseSlug, sections, setSections, s
                     return (
                       <div
                         key={item.id}
-                        onClick={() => onSelectItem(item.id, item.type)}
+                        onClick={() => onSelectItem(item.id, item.type, section.id)}
                         className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer group transition ${
                           isSelected ? 'bg-blue-50 border-l-3 border-blue-500' : 'hover:bg-white'
                         }`}

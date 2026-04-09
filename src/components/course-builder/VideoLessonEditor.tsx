@@ -1,7 +1,16 @@
 'use client';
 import { useState } from 'react';
+import api from '@/lib/api';
 
-export default function VideoLessonEditor({ title: initialTitle }: { title: string }) {
+interface VideoLessonProps {
+  title: string;
+  courseSlug?: string;
+  moduleId?: string;
+  lessonId?: string;
+  onTitleChange?: (t: string) => void;
+}
+
+export default function VideoLessonEditor({ title: initialTitle, courseSlug, moduleId, lessonId, onTitleChange }: VideoLessonProps) {
   const [title, setTitle] = useState(initialTitle);
   const [activeTab, setActiveTab] = useState<'lesson' | 'qa'>('lesson');
   const [duration, setDuration] = useState('15');
@@ -9,6 +18,29 @@ export default function VideoLessonEditor({ title: initialTitle }: { title: stri
   const [sourceType, setSourceType] = useState('youtube');
   const [videoUrl, setVideoUrl] = useState('');
   const [content, setContent] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+
+  const handleSave = async () => {
+    if (!courseSlug || !moduleId || !lessonId) return;
+    setSaving(true); setSaveStatus('idle');
+    try {
+      await api.updateLesson(courseSlug, parseInt(moduleId), parseInt(lessonId), {
+        title: { en: title },
+        content: { en: content },
+        video_url: videoUrl,
+        video_source: sourceType,
+        duration: parseInt(duration) || 0,
+        is_free_preview: isPreview,
+      });
+      setSaveStatus('saved');
+      onTitleChange?.(title);
+      setTimeout(() => setSaveStatus('idle'), 2500);
+    } catch {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    } finally { setSaving(false); }
+  };
 
   return (
     <div className="p-6 w-[70%] mx-auto">
@@ -66,7 +98,17 @@ export default function VideoLessonEditor({ title: initialTitle }: { title: stri
             <textarea className="w-full px-3 py-2 border rounded-lg text-sm min-h-[150px]" value={content} onChange={e => setContent(e.target.value)} placeholder="Lesson description..." />
           </div>
 
-          <button className="px-6 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition">Save Lesson</button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className={`px-6 py-2.5 rounded-lg text-sm font-medium transition cursor-pointer ${
+              saveStatus === 'saved' ? 'bg-green-500 text-white' :
+              saveStatus === 'error' ? 'bg-red-500 text-white' :
+              'bg-orange-500 text-white hover:bg-orange-600'
+            } disabled:opacity-50`}
+          >
+            {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? '✗ Error' : 'Save Lesson'}
+          </button>
         </div>
       ) : (
         <div className="text-center py-12 text-gray-400">

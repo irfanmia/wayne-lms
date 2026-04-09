@@ -10,9 +10,12 @@ interface Props {
   itemId: string | null;
   itemType: LessonType | null;
   itemTitle: string;
+  courseSlug?: string;
+  moduleId?: string | null;
+  onTitleChange?: (title: string) => void;
 }
 
-function GenericLessonEditor({ title: initialTitle, type, sourceLabel, placeholder }: { title: string; type: string; sourceLabel: string; placeholder: string }) {
+function GenericLessonEditor({ title: initialTitle, type, sourceLabel, placeholder, courseSlug, moduleId, lessonId, onTitleChange }: { title: string; type: string; sourceLabel: string; placeholder: string; courseSlug?: string; moduleId?: string; lessonId?: string; onTitleChange?: (t: string) => void }) {
   return (
     <div className="p-6 max-w-4xl">
       <div className="flex items-center gap-3 mb-4">
@@ -45,7 +48,7 @@ function GenericLessonEditor({ title: initialTitle, type, sourceLabel, placehold
   );
 }
 
-export default function LessonEditor({ itemId, itemType, itemTitle }: Props) {
+export default function LessonEditor({ itemId, itemType, itemTitle, courseSlug, moduleId, onTitleChange }: Props) {
   if (!itemId || !itemType) {
     return (
       <div className="flex-1 flex items-center justify-center h-full min-h-[60vh]">
@@ -61,14 +64,15 @@ export default function LessonEditor({ itemId, itemType, itemTitle }: Props) {
     );
   }
 
+  const saveProps = { courseSlug: courseSlug || '', moduleId: moduleId || '', lessonId: itemId || '', onTitleChange };
   switch (itemType) {
-    case 'text': return <TextLessonEditor title={itemTitle} />;
-    case 'video': return <VideoLessonEditor title={itemTitle} />;
+    case 'text': return <TextLessonEditor title={itemTitle} {...saveProps} />;
+    case 'video': return <VideoLessonEditor title={itemTitle} {...saveProps} />;
     case 'quiz': return <QuizEditor title={itemTitle} />;
     case 'assignment': return <AssignmentEditor title={itemTitle} />;
-    case 'audio': return <GenericLessonEditor title={itemTitle} type="audio" sourceLabel="Audio URL" placeholder="Enter audio file URL..." />;
-    case 'slides': return <GenericLessonEditor title={itemTitle} type="slides" sourceLabel="Slides URL" placeholder="Enter Google Slides or PDF URL..." />;
-    case 'stream': return <GenericLessonEditor title={itemTitle} type="stream" sourceLabel="Stream URL" placeholder="Enter live stream URL..." />;
+    case 'audio': return <GenericLessonEditor title={itemTitle} type="audio" sourceLabel="Audio URL" placeholder="Enter audio file URL..." {...saveProps} />;
+    case 'slides': return <GenericLessonEditor title={itemTitle} type="slides" sourceLabel="Slides URL" placeholder="Enter Google Slides or PDF URL..." {...saveProps} />;
+    case 'stream': return <GenericLessonEditor title={itemTitle} type="stream" sourceLabel="Stream URL" placeholder="Enter live stream URL..." {...saveProps} />;
     case 'exercise': return <ExerciseEditor title={itemTitle} />;
     default: return null;
   }

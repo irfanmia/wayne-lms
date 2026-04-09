@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useCallback } from 'react';
+import api from '@/lib/api';
 
 function RichTextToolbar({ editorRef }: { editorRef: React.RefObject<HTMLDivElement | null> }) {
   const [fontSize, setFontSize] = useState(16);
@@ -174,7 +175,15 @@ function RichTextEditor({ value, onChange, minHeight = '200px', placeholder = ''
 
 export { RichTextEditor, RichTextToolbar };
 
-export default function TextLessonEditor({ title: initialTitle }: { title: string }) {
+interface TextLessonProps {
+  title: string;
+  courseSlug?: string;
+  moduleId?: string;
+  lessonId?: string;
+  onTitleChange?: (t: string) => void;
+}
+
+export default function TextLessonEditor({ title: initialTitle, courseSlug, moduleId, lessonId, onTitleChange }: TextLessonProps) {
   const [title, setTitle] = useState(initialTitle);
   const [activeTab, setActiveTab] = useState<'lesson' | 'qa'>('lesson');
   const [duration, setDuration] = useState('');
@@ -184,6 +193,30 @@ export default function TextLessonEditor({ title: initialTitle }: { title: strin
   const [startTime, setStartTime] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [lessonContent, setLessonContent] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+
+  const handleSave = async () => {
+    if (!courseSlug || !moduleId || !lessonId) return;
+    setSaving(true);
+    setSaveStatus('idle');
+    try {
+      await api.updateLesson(courseSlug, parseInt(moduleId), parseInt(lessonId), {
+        title: { en: title },
+        content: { en: lessonContent },
+        duration: parseInt(duration) || 0,
+        is_free_preview: isPreview,
+      });
+      setSaveStatus('saved');
+      onTitleChange?.(title);
+      setTimeout(() => setSaveStatus('idle'), 2500);
+    } catch {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="p-6 w-[70%] mx-auto">
@@ -200,8 +233,16 @@ export default function TextLessonEditor({ title: initialTitle }: { title: strin
             placeholder="Enter lesson name"
           />
         </div>
-        <button className="ml-4 px-6 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition cursor-pointer">
-          Save
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className={`ml-4 px-6 py-2 rounded-lg text-sm font-medium transition cursor-pointer ${
+            saveStatus === 'saved' ? 'bg-green-500 text-white' :
+            saveStatus === 'error' ? 'bg-red-500 text-white' :
+            'bg-orange-500 text-white hover:bg-orange-600'
+          } disabled:opacity-50`}
+        >
+          {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? '✗ Error' : 'Save'}
         </button>
       </div>
 
@@ -311,8 +352,16 @@ export default function TextLessonEditor({ title: initialTitle }: { title: strin
 
           {/* Save button at bottom */}
           <div className="flex justify-end pt-4">
-            <button className="px-8 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition cursor-pointer">
-              Save
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className={`px-8 py-2.5 rounded-lg text-sm font-medium transition cursor-pointer ${
+                saveStatus === 'saved' ? 'bg-green-500 text-white' :
+                saveStatus === 'error' ? 'bg-red-500 text-white' :
+                'bg-orange-500 text-white hover:bg-orange-600'
+              } disabled:opacity-50`}
+            >
+              {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? '✗ Error' : 'Save'}
             </button>
           </div>
         </div>
