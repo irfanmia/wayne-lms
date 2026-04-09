@@ -152,17 +152,17 @@ export default function SettingsEditor() {
     if (!courseData || isNewCourse) return;
     setName(courseData.title || '');
     setSlug(courseData.slug || '');
-    // category can be an object {id, name} or a plain string from older API
-    const cat = courseData.category;
-    if (cat && typeof cat === 'object') {
-      setCategory(cat.name || '');
-      if (cat.id) setCategoryId(cat.id);
-    } else if (typeof cat === 'string') {
-      setCategory(cat);
+    // category_fk is an id (number), category is a plain string fallback
+    if (courseData.category_fk) {
+      setCategoryId(Number(courseData.category_fk));
+    } else if (courseData.category?.id) {
+      setCategoryId(courseData.category.id);
     }
-    const subCat = courseData.sub_category;
-    if (subCat && typeof subCat === 'object' && subCat.id) {
-      setSubCategoryId(subCat.id);
+    setCategory(courseData.category?.name || (typeof courseData.category === 'string' ? courseData.category : '') || '');
+    if (courseData.sub_category_fk) {
+      setSubCategoryId(Number(courseData.sub_category_fk));
+    } else if (courseData.sub_category?.id) {
+      setSubCategoryId(courseData.sub_category.id);
     }
     setLevel(courseData.level || 'Beginner');
     setInstructor(courseData.instructor || '');
