@@ -101,6 +101,7 @@ class Lesson(models.Model):
     video_url = models.URLField(blank=True)
     video_source = models.CharField(max_length=20, choices=VIDEO_SOURCE_CHOICES, blank=True)
     video_duration = models.CharField(max_length=20, blank=True, help_text='e.g. 3m 42s')
+    audio_url = models.URLField(blank=True, default='')
     quiz = models.ForeignKey('Quiz', on_delete=models.SET_NULL, null=True, blank=True, related_name='lesson')
     duration = models.PositiveIntegerField(help_text='Duration in minutes', default=0)
     order = models.PositiveIntegerField(default=0)

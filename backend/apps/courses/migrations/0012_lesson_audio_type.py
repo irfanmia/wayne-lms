@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lesson',
             name='audio_url',
-            field=models.URLField(blank=True),
+            field=models.URLField(blank=True, default=''),
+            preserve_default=False,
         ),
     ]
