@@ -15,6 +15,9 @@ export default function SettingsPage() {
   const [timezone, setTimezone] = useState('UTC');
   const [language, setLanguage] = useState('English');
   const [maintenance, setMaintenance] = useState(false);
+  // Thumbnail dimensions
+  const [thumbWidth, setThumbWidth] = useState('1280');
+  const [thumbHeight, setThumbHeight] = useState('720');
 
   // Branding
   const [primaryColor, setPrimaryColor] = useState('#F97316');
@@ -78,6 +81,12 @@ export default function SettingsPage() {
   const showSuccess = (msg: string) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(''), 3000); };
 
   useEffect(() => {
+    // Load thumbnail dimensions from localStorage
+    const savedW = localStorage.getItem('lms_thumb_width');
+    const savedH = localStorage.getItem('lms_thumb_height');
+    if (savedW) setThumbWidth(savedW);
+    if (savedH) setThumbHeight(savedH);
+
     api.getPlatformSettings().then((res: Record<string, unknown>) => {
       if (res.platform_name) setPlatformName(res.platform_name as string);
       if (res.tagline) setTagline(res.tagline as string);
@@ -89,6 +98,8 @@ export default function SettingsPage() {
       if (res.default_currency || res.currency) setCurrency((res.default_currency as string) || (res.currency as string));
       if (res.meta_title) setMetaTitle(res.meta_title as string);
       if (res.meta_description) setMetaDesc(res.meta_description as string);
+      if (res.thumb_width) setThumbWidth(String(res.thumb_width));
+      if (res.thumb_height) setThumbHeight(String(res.thumb_height));
     }).catch(() => { /* settings may not exist yet */ });
     // Load AI Tutor settings
     api.getAITutorSettings().then((res: Record<string, unknown>) => {
@@ -102,10 +113,16 @@ export default function SettingsPage() {
   }, []);
 
   const save = async () => {
+    // Persist thumbnail dimensions and currency to localStorage for use across app
+    localStorage.setItem('lms_thumb_width', thumbWidth);
+    localStorage.setItem('lms_thumb_height', thumbHeight);
+    localStorage.setItem('lms_currency', currency);
     try {
       await api.updatePlatformSettings({
         platform_name: platformName, tagline, support_email: supportEmail, timezone, language,
         maintenance_mode: maintenance, primary_color: primaryColor, currency,
+        thumb_width: Number(thumbWidth) || 1280,
+        thumb_height: Number(thumbHeight) || 720,
         meta_title: metaTitle, meta_description: metaDesc,
         stripe_enabled: stripeEnabled, paypal_enabled: paypalEnabled,
         email_provider: emailProvider, smtp_host: smtpHost, smtp_port: smtpPort,
@@ -145,6 +162,126 @@ export default function SettingsPage() {
                 <button onClick={() => setMaintenance(!maintenance)} className={`w-12 h-6 rounded-full transition-colors ${maintenance ? 'bg-red-500' : 'bg-gray-300'} relative`}>
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${maintenance ? 'left-6' : 'left-0.5'}`} />
                 </button>
+              </div>
+
+              {/* Currency */}
+              <div>
+                <label className="text-sm text-gray-600 block mb-1">Default Currency</label>
+                <select value={currency} onChange={e => setCurrency(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                  <optgroup label="Popular">
+                    <option value="USD">USD — US Dollar ($)</option>
+                    <option value="EUR">EUR — Euro (€)</option>
+                    <option value="GBP">GBP — British Pound (£)</option>
+                    <option value="AED">AED — UAE Dirham (د.إ)</option>
+                    <option value="INR">INR — Indian Rupee (₹)</option>
+                    <option value="SAR">SAR — Saudi Riyal (﷼)</option>
+                    <option value="QAR">QAR — Qatari Riyal (﷼)</option>
+                    <option value="KWD">KWD — Kuwaiti Dinar (KD)</option>
+                    <option value="OMR">OMR — Omani Rial (﷼)</option>
+                    <option value="BHD">BHD — Bahraini Dinar (BD)</option>
+                    <option value="PKR">PKR — Pakistani Rupee (₨)</option>
+                    <option value="BDT">BDT — Bangladeshi Taka (৳)</option>
+                    <option value="LKR">LKR — Sri Lankan Rupee (₨)</option>
+                  </optgroup>
+                  <optgroup label="Americas">
+                    <option value="CAD">CAD — Canadian Dollar (C$)</option>
+                    <option value="AUD">AUD — Australian Dollar (A$)</option>
+                    <option value="NZD">NZD — New Zealand Dollar (NZ$)</option>
+                    <option value="BRL">BRL — Brazilian Real (R$)</option>
+                    <option value="MXN">MXN — Mexican Peso (Mex$)</option>
+                    <option value="ARS">ARS — Argentine Peso ($)</option>
+                    <option value="CLP">CLP — Chilean Peso ($)</option>
+                    <option value="COP">COP — Colombian Peso ($)</option>
+                  </optgroup>
+                  <optgroup label="Europe">
+                    <option value="CHF">CHF — Swiss Franc (Fr)</option>
+                    <option value="SEK">SEK — Swedish Krona (kr)</option>
+                    <option value="NOK">NOK — Norwegian Krone (kr)</option>
+                    <option value="DKK">DKK — Danish Krone (kr)</option>
+                    <option value="PLN">PLN — Polish Złoty (zł)</option>
+                    <option value="CZK">CZK — Czech Koruna (Kč)</option>
+                    <option value="HUF">HUF — Hungarian Forint (Ft)</option>
+                    <option value="RON">RON — Romanian Leu (lei)</option>
+                    <option value="TRY">TRY — Turkish Lira (₺)</option>
+                    <option value="RUB">RUB — Russian Ruble (₽)</option>
+                    <option value="UAH">UAH — Ukrainian Hryvnia (₴)</option>
+                  </optgroup>
+                  <optgroup label="Asia & Pacific">
+                    <option value="JPY">JPY — Japanese Yen (¥)</option>
+                    <option value="CNY">CNY — Chinese Yuan (¥)</option>
+                    <option value="KRW">KRW — South Korean Won (₩)</option>
+                    <option value="HKD">HKD — Hong Kong Dollar (HK$)</option>
+                    <option value="SGD">SGD — Singapore Dollar (S$)</option>
+                    <option value="MYR">MYR — Malaysian Ringgit (RM)</option>
+                    <option value="THB">THB — Thai Baht (฿)</option>
+                    <option value="IDR">IDR — Indonesian Rupiah (Rp)</option>
+                    <option value="PHP">PHP — Philippine Peso (₱)</option>
+                    <option value="VND">VND — Vietnamese Dong (₫)</option>
+                    <option value="TWD">TWD — Taiwan Dollar (NT$)</option>
+                    <option value="EGP">EGP — Egyptian Pound (E£)</option>
+                    <option value="NGN">NGN — Nigerian Naira (₦)</option>
+                    <option value="KES">KES — Kenyan Shilling (KSh)</option>
+                    <option value="GHS">GHS — Ghanaian Cedi (₵)</option>
+                    <option value="ZAR">ZAR — South African Rand (R)</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              {/* Thumbnail Dimensions */}
+              <div className="p-4 border border-gray-200 rounded-lg space-y-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Course Thumbnail Dimensions</p>
+                  <p className="text-xs text-gray-500 mt-0.5">These dimensions will be shown as the recommended size on the course image upload area.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 block mb-1">Width (px)</label>
+                    <input
+                      type="number"
+                      value={thumbWidth}
+                      onChange={e => setThumbWidth(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      placeholder="1280"
+                      min="100"
+                      max="4000"
+                    />
+                  </div>
+                  <span className="text-gray-400 mt-4">×</span>
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 block mb-1">Height (px)</label>
+                    <input
+                      type="number"
+                      value={thumbHeight}
+                      onChange={e => setThumbHeight(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      placeholder="720"
+                      min="100"
+                      max="4000"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 block mb-1">Preview</label>
+                    <div
+                      className="border-2 border-dashed border-orange-200 rounded-lg bg-orange-50 flex items-center justify-center text-xs text-orange-400 font-medium"
+                      style={{ aspectRatio: `${thumbWidth}/${thumbHeight}`, maxHeight: 48 }}
+                    >
+                      {thumbWidth}×{thumbHeight}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  {[{w:'1280',h:'720',label:'16:9 HD'},{w:'1920',h:'1080',label:'16:9 FHD'},{w:'1200',h:'675',label:'16:9 Social'},{w:'800',h:'600',label:'4:3'},{w:'1200',h:'628',label:'OG Image'}].map(p => (
+                    <button
+                      key={p.label}
+                      onClick={() => { setThumbWidth(p.w); setThumbHeight(p.h); }}
+                      className={`px-2 py-1 text-xs rounded border transition ${
+                        thumbWidth === p.w && thumbHeight === p.h
+                          ? 'bg-orange-500 text-white border-orange-500'
+                          : 'border-gray-200 text-gray-500 hover:border-orange-300'
+                      }`}
+                    >{p.label}</button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -206,7 +343,7 @@ export default function SettingsPage() {
                   </div>
                 )}
               </div>
-              <div><label className="text-sm text-gray-600 block mb-1">Currency</label><select value={currency} onChange={e => setCurrency(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"><option>USD</option><option>EUR</option><option>AED</option><option>INR</option><option>GBP</option></select></div>
+              <div><label className="text-sm text-gray-600 block mb-1">Currency</label><p className="text-xs text-gray-400 mb-2">Set in General Settings → Default Currency</p><div className="px-3 py-2 border border-gray-100 bg-gray-50 rounded-lg text-sm text-gray-600 inline-block">{currency}</div></div>
             </div>
           </div>
         )}

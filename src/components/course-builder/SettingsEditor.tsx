@@ -142,6 +142,16 @@ export default function SettingsEditor() {
   const [prereqSearch, setPrereqSearch] = useState('');
   const [allCourses, setAllCourses] = useState<{slug: string; title: string}[]>([]);
 
+  /* Thumbnail dimensions from platform settings */
+  const [thumbWidth, setThumbWidth] = useState('1280');
+  const [thumbHeight, setThumbHeight] = useState('720');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setThumbWidth(localStorage.getItem('lms_thumb_width') || '1280');
+      setThumbHeight(localStorage.getItem('lms_thumb_height') || '720');
+    }
+  }, []);
+
   /* Course Files */
   const [courseImage, setCourseImage] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
@@ -514,7 +524,9 @@ export default function SettingsEditor() {
                   ) : (
                     <>
                       <p className="text-2xl mb-1">🖼️</p>
-                      <p className="text-xs text-gray-400">Drag & drop or click to upload</p>
+                      <p className="text-xs text-gray-500 font-medium">Drag & drop or click to upload</p>
+                      <p className="text-xs text-orange-500 mt-1 font-semibold">Recommended: {thumbWidth} × {thumbHeight} px</p>
+                      <p className="text-xs text-gray-400 mt-0.5">JPG, PNG, WebP · Max 5 MB</p>
                     </>
                   )}
                 </label>
