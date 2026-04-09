@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useCourseBuilder } from './CourseBuilderLayout';
 import api from '@/lib/api';
+import EmojiPicker from '@/components/admin/EmojiPicker';
 
 const settingsSections = ['Main', 'Access', 'Prerequisites', 'Course Files', 'Certificate', 'Course Page'] as const;
 const levels = ['Beginner', 'Intermediate', 'Advanced', 'All Levels'];
@@ -58,7 +59,9 @@ export default function SettingsEditor() {
   const [showNewCatModal, setShowNewCatModal] = useState(false);
   const [showNewSubCatModal, setShowNewSubCatModal] = useState(false);
   const [newCatName, setNewCatName] = useState('');
+  const [newCatIcon, setNewCatIcon] = useState('');
   const [newSubCatName, setNewSubCatName] = useState('');
+  const [newSubCatIcon, setNewSubCatIcon] = useState('');
   const [catSaving, setCatSaving] = useState(false);
 
   const fetchCategories = async () => {
@@ -87,11 +90,12 @@ export default function SettingsEditor() {
     if (!newCatName.trim()) return;
     setCatSaving(true);
     try {
-      const res = await api.createCategory({ name: newCatName.trim() });
+      const res = await api.createCategory({ name: newCatName.trim(), icon: newCatIcon });
       await fetchCategories();
       setCategoryId(res.id);
       setSubCategoryId('');
       setNewCatName('');
+      setNewCatIcon('');
       setShowNewCatModal(false);
     } catch { /* ignore */ } finally { setCatSaving(false); }
   };
@@ -100,10 +104,11 @@ export default function SettingsEditor() {
     if (!newSubCatName.trim() || !categoryId) return;
     setCatSaving(true);
     try {
-      const res = await api.createCategory({ name: newSubCatName.trim(), parent: categoryId });
+      const res = await api.createCategory({ name: newSubCatName.trim(), icon: newSubCatIcon, parent: categoryId });
       await fetchCategories();
       setSubCategoryId(res.id);
       setNewSubCatName('');
+      setNewSubCatIcon('');
       setShowNewSubCatModal(false);
     } catch { /* ignore */ } finally { setCatSaving(false); }
   };
@@ -414,14 +419,20 @@ export default function SettingsEditor() {
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowNewCatModal(false)}>
                 <div className="bg-white rounded-xl p-6 w-96 shadow-2xl" onClick={e => e.stopPropagation()}>
                   <h4 className="text-base font-semibold mb-4">Create New Category</h4>
-                  <input
-                    className={inputCls}
-                    value={newCatName}
-                    onChange={e => setNewCatName(e.target.value)}
-                    placeholder="Category name"
-                    autoFocus
-                    onKeyDown={e => e.key === 'Enter' && handleCreateCategory()}
-                  />
+                  <div className="space-y-3">
+                    <input
+                      className={inputCls}
+                      value={newCatName}
+                      onChange={e => setNewCatName(e.target.value)}
+                      placeholder="Category name"
+                      autoFocus
+                      onKeyDown={e => e.key === 'Enter' && handleCreateCategory()}
+                    />
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Icon (optional)</label>
+                      <EmojiPicker value={newCatIcon} onChange={setNewCatIcon} placeholder="Pick an icon…" />
+                    </div>
+                  </div>
                   <div className="flex gap-3 mt-4 justify-end">
                     <button onClick={() => setShowNewCatModal(false)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 cursor-pointer">Cancel</button>
                     <button
@@ -440,14 +451,20 @@ export default function SettingsEditor() {
                 <div className="bg-white rounded-xl p-6 w-96 shadow-2xl" onClick={e => e.stopPropagation()}>
                   <h4 className="text-base font-semibold mb-1">Create New Sub-category</h4>
                   <p className="text-xs text-gray-400 mb-4">Under: <strong>{selectedCategory?.name}</strong></p>
-                  <input
-                    className={inputCls}
-                    value={newSubCatName}
-                    onChange={e => setNewSubCatName(e.target.value)}
-                    placeholder="Sub-category name"
-                    autoFocus
-                    onKeyDown={e => e.key === 'Enter' && handleCreateSubCategory()}
-                  />
+                  <div className="space-y-3">
+                    <input
+                      className={inputCls}
+                      value={newSubCatName}
+                      onChange={e => setNewSubCatName(e.target.value)}
+                      placeholder="Sub-category name"
+                      autoFocus
+                      onKeyDown={e => e.key === 'Enter' && handleCreateSubCategory()}
+                    />
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Icon (optional)</label>
+                      <EmojiPicker value={newSubCatIcon} onChange={setNewSubCatIcon} placeholder="Pick an icon…" />
+                    </div>
+                  </div>
                   <div className="flex gap-3 mt-4 justify-end">
                     <button onClick={() => setShowNewSubCatModal(false)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 cursor-pointer">Cancel</button>
                     <button

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
+import EmojiPicker from '@/components/admin/EmojiPicker';
 
 type Category = {
   id: number;
@@ -152,13 +153,8 @@ export default function CategoriesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Icon (emoji or code)</label>
-                <input
-                  className={inputCls}
-                  value={newCatIcon}
-                  onChange={e => setNewCatIcon(e.target.value)}
-                  placeholder="e.g. 🌐"
-                />
+                <label className="block text-xs text-gray-500 mb-1">Icon</label>
+                <EmojiPicker value={newCatIcon} onChange={setNewCatIcon} placeholder="Pick an icon…" />
               </div>
               <button
                 onClick={handleCreateCategory}
@@ -196,13 +192,8 @@ export default function CategoriesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Icon (emoji or code)</label>
-                <input
-                  className={inputCls}
-                  value={newSubIcon}
-                  onChange={e => setNewSubIcon(e.target.value)}
-                  placeholder="e.g. ⚛️"
-                />
+                <label className="block text-xs text-gray-500 mb-1">Icon</label>
+                <EmojiPicker value={newSubIcon} onChange={setNewSubIcon} placeholder="Pick an icon…" />
               </div>
               <button
                 onClick={handleCreateSubCategory}
@@ -244,12 +235,9 @@ export default function CategoriesPage() {
                               autoFocus
                               onKeyDown={e => { if (e.key === 'Enter') handleUpdateCategory(cat); if (e.key === 'Escape') setEditingCat(null); }}
                             />
-                            <input
-                              className="w-16 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none"
-                              value={editIcon}
-                              onChange={e => setEditIcon(e.target.value)}
-                              placeholder="icon"
-                            />
+                            <div className="w-20">
+                              <EmojiPicker value={editIcon} onChange={setEditIcon} placeholder="🏷️" />
+                            </div>
                             <button onClick={() => handleUpdateCategory(cat)} className="text-xs text-orange-600 font-medium hover:text-orange-800 cursor-pointer">Save</button>
                             <button onClick={() => setEditingCat(null)} className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer">Cancel</button>
                           </div>
@@ -295,12 +283,9 @@ export default function CategoriesPage() {
                                     autoFocus
                                     onKeyDown={e => { if (e.key === 'Enter') handleUpdateSubCategory(sub); if (e.key === 'Escape') setEditingSub(null); }}
                                   />
-                                  <input
-                                    className="w-16 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none"
-                                    value={editSubIcon}
-                                    onChange={e => setEditSubIcon(e.target.value)}
-                                    placeholder="icon"
-                                  />
+                                  <div className="w-20">
+                                    <EmojiPicker value={editSubIcon} onChange={setEditSubIcon} placeholder="🏷️" />
+                                  </div>
                                   <button onClick={() => handleUpdateSubCategory(sub)} className="text-xs text-orange-600 font-medium hover:text-orange-800 cursor-pointer">Save</button>
                                   <button onClick={() => setEditingSub(null)} className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer">Cancel</button>
                                 </div>
