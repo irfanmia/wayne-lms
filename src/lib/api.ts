@@ -41,18 +41,28 @@ class ApiClient {
 
     const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
 
-    // If token expired (401), clear token and retry without auth for GET requests
-    if (res.status === 401 && this.token && (!options.method || options.method === 'GET')) {
+    // If token expired (401)
+    if (res.status === 401 && this.token) {
       this.token = null;
       if (typeof window !== 'undefined') localStorage.removeItem('auth_token');
-      const retryHeaders = { ...headers };
-      delete retryHeaders['Authorization'];
-      const retryRes = await fetch(`${API_BASE}${endpoint}`, { ...options, headers: retryHeaders });
-      if (!retryRes.ok) {
-        const error = await retryRes.json().catch(() => ({ detail: 'Request failed' }));
-        throw new Error(error.detail || JSON.stringify(error));
+      const method = (options.method || 'GET').toUpperCase();
+      if (method === 'GET') {
+        // Retry GET without auth for public endpoints
+        const retryHeaders = { ...headers };
+        delete retryHeaders['Authorization'];
+        const retryRes = await fetch(`${API_BASE}${endpoint}`, { ...options, headers: retryHeaders });
+        if (!retryRes.ok) {
+          const error = await retryRes.json().catch(() => ({ detail: 'Request failed' }));
+          throw new Error(error.detail || JSON.stringify(error));
+        }
+        return retryRes.json();
+      } else {
+        // For write operations, session expired — redirect to login
+        if (typeof window !== 'undefined') {
+          window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+        }
+        throw new Error('Session expired. Please log in again.');
       }
-      return retryRes.json();
     }
 
     if (!res.ok) {
@@ -271,7 +281,7 @@ class ApiClient {
     const query = params ? '?' + new URLSearchParams(params).toString() : '';
     return this.request(`/content-library/lessons/${query}`);
   }
-  async createLesson(data: Record<string, unknown>) {
+  async createContentLesson(data: Record<string, unknown>) {
     return this.request('/content-library/lessons/', { method: 'POST', body: JSON.stringify(data) });
   }
   async getQuizzes(params?: Record<string, string>) {

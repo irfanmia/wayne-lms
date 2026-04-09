@@ -97,7 +97,10 @@ export default function SettingsEditor() {
       setNewCatName('');
       setNewCatIcon('');
       setShowNewCatModal(false);
-    } catch { /* ignore */ } finally { setCatSaving(false); }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to create category';
+      setErrors(prev => ({ ...prev, save: msg }));
+    } finally { setCatSaving(false); }
   };
 
   const handleCreateSubCategory = async () => {
@@ -110,7 +113,10 @@ export default function SettingsEditor() {
       setNewSubCatName('');
       setNewSubCatIcon('');
       setShowNewSubCatModal(false);
-    } catch { /* ignore */ } finally { setCatSaving(false); }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to create sub-category';
+      setErrors(prev => ({ ...prev, save: msg }));
+    } finally { setCatSaving(false); }
   };
 
   /* Main */
