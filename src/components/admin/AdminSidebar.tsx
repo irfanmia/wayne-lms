@@ -3,9 +3,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const navItems = [
+type NavItem =
+  | { href: string; label: string; icon: string; children?: undefined }
+  | { href: string; label: string; icon: string; children: { href: string; label: string }[] };
+
+const navItems: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: '🏠' },
-  { href: '/admin/courses', label: 'Courses', icon: '📚' },
+  {
+    href: '/admin/courses',
+    label: 'Courses',
+    icon: '📚',
+    children: [
+      { href: '/admin/courses', label: 'All Courses' },
+      { href: '/admin/courses/categories', label: 'Categories' },
+    ],
+  },
   { href: '/admin/exercises', label: 'Exercises', icon: '💻' },
   { href: '/admin/content', label: 'Content Library', icon: '📝' },
   { href: '/admin/users', label: 'Users', icon: '👥' },
@@ -22,10 +34,23 @@ const navItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [openMenus, setOpenMenus] = useState<string[]>(['/admin/courses']);
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin';
+    if (href === '/admin/courses') return pathname === '/admin/courses';
     return pathname.startsWith(href);
+  };
+
+  const isParentActive = (item: NavItem) => {
+    if (!item.children) return isActive(item.href);
+    return item.children.some(c => pathname.startsWith(c.href));
+  };
+
+  const toggleMenu = (href: string) => {
+    setOpenMenus(prev =>
+      prev.includes(href) ? prev.filter(h => h !== href) : [...prev, href]
+    );
   };
 
   return (
@@ -60,21 +85,68 @@ export default function AdminSidebar() {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 space-y-1 px-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive(item.href)
-                  ? 'border-l-4 border-orange-500 text-orange-500 bg-gray-800/50'
-                  : 'hover:text-white hover:bg-gray-800/30'
-              }`}
-              title={collapsed ? item.label : undefined}
-            >
-              <span className="text-lg shrink-0">{item.icon}</span>
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isOpen = openMenus.includes(item.href);
+            const parentActive = isParentActive(item);
+
+            if (item.children && !collapsed) {
+              return (
+                <div key={item.href}>
+                  <button
+                    onClick={() => toggleMenu(item.href)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      parentActive
+                        ? 'border-l-4 border-orange-500 text-orange-500 bg-gray-800/50'
+                        : 'hover:text-white hover:bg-gray-800/30'
+                    }`}
+                  >
+                    <span className="text-lg shrink-0">{item.icon}</span>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-90' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  {isOpen && (
+                    <div className="ml-9 mt-0.5 space-y-0.5">
+                      {item.children.map(child => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={`block px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                            isActive(child.href)
+                              ? 'text-orange-400 bg-gray-800/60'
+                              : 'text-gray-400 hover:text-white hover:bg-gray-800/30'
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            // Collapsed with children: just show icon linking to parent
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  parentActive
+                    ? 'border-l-4 border-orange-500 text-orange-500 bg-gray-800/50'
+                    : 'hover:text-white hover:bg-gray-800/30'
+                }`}
+                title={collapsed ? item.label : undefined}
+              >
+                <span className="text-lg shrink-0">{item.icon}</span>
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* User info */}
