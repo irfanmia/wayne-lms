@@ -22,10 +22,12 @@ export default function VideoLessonEditor({ title: initialTitle, courseSlug, mod
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
 
   const handleSave = async () => {
-    if (!courseSlug || !moduleId || !lessonId) return;
+    const mid = parseInt(moduleId || '');
+    const lid = parseInt(lessonId || '');
+    if (!courseSlug || !mid || !lid || isNaN(mid) || isNaN(lid)) return;
     setSaving(true); setSaveStatus('idle');
     try {
-      await api.updateLesson(courseSlug, parseInt(moduleId), parseInt(lessonId), {
+      await api.updateLesson(courseSlug, mid, lid, {
         title: { en: title },
         content: { en: content },
         video_url: videoUrl,

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Course, Module, Lesson, Quiz, Question, Choice,
+from .models import (Category, Course, Module, Lesson, Quiz, Question, Choice,
                      QuizAttempt, QuizAnswer, LessonProgress, LessonComment,
                      Wishlist, Enrollment, CoursePrerequisite, CourseInstructor,
                      DripSchedule, CourseFAQ, CourseNotice)
@@ -53,8 +53,8 @@ class LessonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'content', 'lesson_type', 'video_url',
-                  'video_duration', 'quiz_id', 'assignment_id', 'duration', 'order']
+        fields = ['id', 'title', 'content', 'lesson_type', 'video_url', 'video_source',
+                  'video_duration', 'quiz_id', 'assignment_id', 'duration', 'order', 'is_free_preview']
 
     def get_assignment_id(self, obj):
         assignment = obj.assignments.first()
@@ -99,7 +99,29 @@ class CourseCreateUpdateSerializer(serializers.ModelSerializer):
             'description': {'required': False},
         }
 
+
+    def _resolve_category(self, validated_data):
+        request = self.context.get("request")
+        if request:
+            cat_id = request.data.get("category_id")
+            sub_cat_id = request.data.get("sub_category_id")
+            if cat_id:
+                try:
+                    cat = Category.objects.get(id=int(cat_id))
+                    validated_data["category_fk"] = cat
+                    validated_data["category"] = cat.name
+                except Exception:
+                    pass
+            if sub_cat_id:
+                try:
+                    validated_data["sub_category_fk"] = Category.objects.get(id=int(sub_cat_id))
+                except Exception:
+                    pass
+            elif "sub_category_id" in request.data:
+                validated_data["sub_category_fk"] = None
+
     def create(self, validated_data):
+        self._resolve_category(validated_data)
         # Auto-generate slug from title if not provided
         if 'slug' not in validated_data or not validated_data['slug']:
             import re
@@ -130,7 +152,7 @@ class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('id', 'slug', 'title', 'description', 'is_free', 'price', 'thumbnail',
-                  'category', 'duration', 'level', 'module_count', 'instructor', 'priceType',
+                  'category', 'category_fk', 'sub_category_fk', 'duration', 'level', 'module_count', 'instructor', 'priceType',
                   'status', 'course_type', 'created_at')
 
     def get_instructor(self, obj):
@@ -387,3 +409,22 @@ class DripScheduleSerializer(serializers.ModelSerializer):
 
 
 # CourseFAQSerializer and CourseNoticeSerializer moved above CourseDetailSerializer
+
+
+# ─── Category Serializer ───
+
+class CategorySerializer(serializers.ModelSerializer):
+    subcategories = serializers.SerializerMethodField()
+    slug = serializers.SlugField(required=False, allow_blank=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'slug', 'icon', 'parent', 'subcategories']
+
+    def get_subcategories(self, obj):
+        try:
+            if obj.parent is not None:
+                return []
+            return CategorySerializer(obj.subcategories.all(), many=True).data
+        except Exception:
+            return []

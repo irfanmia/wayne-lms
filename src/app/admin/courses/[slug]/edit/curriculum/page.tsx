@@ -30,12 +30,22 @@ export default function CurriculumPage() {
   const [selectedItemType, setSelectedItemType] = useState<LessonType | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
+  // Strip sec-/item- prefixes added by CourseBuilderLayout and return clean numeric id
+  const cleanId = (id: string) => id.replace(/^(sec-|item-|mod-|lesson-[0-9]+-?)/, '');
+
   // Populate sections from course data
   useEffect(() => {
     if (!courseData) return;
-    // CourseBuilderLayout already maps modules → sections
+    // CourseBuilderLayout already maps modules → sections but uses sec-/item- prefixes
     if (courseData.sections && Array.isArray(courseData.sections) && courseData.sections.length > 0) {
-      setSections(courseData.sections);
+      setSections(courseData.sections.map((s: Record<string, unknown>) => ({
+        ...s,
+        id: cleanId(String(s.id)),
+        items: Array.isArray(s.items) ? s.items.map((i: Record<string, unknown>) => ({
+          ...i,
+          id: cleanId(String(i.id)),
+        })) : [],
+      })) as Section[]);
       return;
     }
     // Fallback: map modules directly
