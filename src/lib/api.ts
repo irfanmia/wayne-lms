@@ -27,6 +27,7 @@ class ApiClient {
     this.token = null;
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('refresh_token');
     }
   }
 
@@ -96,6 +97,7 @@ class ApiClient {
   async login(data: { username: string; password: string }) {
     const res = await this.request('/auth/login/', { method: 'POST', body: JSON.stringify(data) });
     if (res.access) this.setToken(res.access);
+    if (res.refresh && typeof window !== 'undefined') localStorage.setItem('refresh_token', res.refresh);
     return res;
   }
   async getMe() {
@@ -104,6 +106,7 @@ class ApiClient {
   async githubAuth(data: { email: string; name: string; avatar: string }) {
     const res = await this.request('/users/auth/github/', { method: 'POST', body: JSON.stringify(data) });
     if (res.access) this.setToken(res.access);
+    if (res.refresh && typeof window !== 'undefined') localStorage.setItem('refresh_token', res.refresh);
     return res;
   }
 

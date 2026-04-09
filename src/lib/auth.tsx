@@ -181,6 +181,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     api.clearToken();
     localStorage.removeItem('user');
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
     setUser(null);
     setIsDemoMode(false);
     if (session) {
