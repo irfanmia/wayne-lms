@@ -34,6 +34,9 @@ class PlatformSettings(models.Model):
     from_name = models.CharField(max_length=100, default='Wayne LMS')
     from_email = models.EmailField(default='noreply@wayne-lms.example.com')
 
+    thumb_width = models.PositiveIntegerField(default=1280)
+    thumb_height = models.PositiveIntegerField(default=720)
+
     meta_title = models.CharField(max_length=255, default='Wayne LMS - Learn to Code')
     meta_description = models.TextField(default='Online coding platform')
     og_image_url = models.URLField(blank=True)

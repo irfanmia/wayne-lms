@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import (Course, Lesson, Quiz, Question, Choice, QuizAttempt,
+from .models import (Category, Course, Module, Lesson, Quiz, Question, Choice, QuizAttempt,
                      QuizAnswer, LessonProgress, LessonComment, Wishlist, Enrollment,
                      CoursePrerequisite, CourseInstructor)
 from .serializers import (
@@ -364,3 +364,80 @@ class CourseNoticeViewSet(viewsets.ModelViewSet):
     serializer_class = CourseNoticeSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ['course']
+
+
+# ─── Category ViewSet ───
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class_name = 'CategorySerializer'
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        return Category.objects.filter(parent=None).prefetch_related('subcategories')
+
+    def get_serializer_class(self):
+        from .serializers import CategorySerializer
+        return CategorySerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    def perform_create(self, serializer):
+        import re
+        name = serializer.validated_data.get('name', '')
+        slug = serializer.validated_data.get('slug') or re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+        base, i = slug, 1
+        while Category.objects.filter(slug=slug).exists():
+            slug = f'{base}-{i}'; i += 1
+        serializer.save(slug=slug)
+
+
+# ─── Admin Curriculum ViewSets ───
+
+class ModuleAdminViewSet(viewsets.ModelViewSet):
+    serializer_class_name = 'ModuleSerializer'
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get_serializer_class(self):
+        from .serializers import ModuleSerializer
+        return ModuleSerializer
+
+    def get_queryset(self):
+        course_slug = self.kwargs.get('course_slug')
+        return Module.objects.filter(course__slug=course_slug).order_by('order')
+
+    def perform_create(self, serializer):
+        from .models import Course
+        course = Course.objects.get(slug=self.kwargs['course_slug'])
+        last_order = Module.objects.filter(course=course).count()
+        title = self.request.data.get('title', {'en': 'New Section'})
+        serializer.save(course=course, order=last_order, title=title)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class LessonAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
+
+    def get_serializer_class(self):
+        from .serializers import LessonSerializer
+        return LessonSerializer
+
+    def get_queryset(self):
+        module_pk = self.kwargs.get('module_pk')
+        return Lesson.objects.filter(module_id=module_pk).order_by('order')
+
+    def perform_create(self, serializer):
+        module_pk = self.kwargs['module_pk']
+        last_order = Lesson.objects.filter(module_id=module_pk).count()
+        title = self.request.data.get('title', {'en': 'New Lesson'})
+        lesson_type = self.request.data.get('lesson_type', 'text')
+        serializer.save(module_id=module_pk, order=last_order, title=title, lesson_type=lesson_type)
+
+    def perform_update(self, serializer):
+        serializer.save()

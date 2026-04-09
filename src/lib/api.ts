@@ -441,7 +441,10 @@ class ApiClient {
   async createCategory(data: Record<string, unknown>) { return this.request('/courses/categories/', { method: 'POST', body: JSON.stringify(data) }); }
 
   // Admin Curriculum (modules + lessons)
-  async getModules(courseSlug: string) { return this.request(`/courses/${courseSlug}/modules/`); }
+  async getModules(courseSlug: string) {
+    const res = await this.request(`/courses/${courseSlug}/modules/`);
+    return Array.isArray(res) ? res : (res.results || res);
+  }
   async createModule(courseSlug: string, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/modules/`, { method: 'POST', body: JSON.stringify(data) }); }
   async updateModule(courseSlug: string, moduleId: number, data: Record<string, unknown>) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/`, { method: 'PATCH', body: JSON.stringify(data) }); }
   async deleteModule(courseSlug: string, moduleId: number) { return this.request(`/courses/${courseSlug}/modules/${moduleId}/`, { method: 'DELETE' }); }
