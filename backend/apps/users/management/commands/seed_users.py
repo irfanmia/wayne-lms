@@ -2,7 +2,12 @@ from django.core.management.base import BaseCommand
 from apps.users.models import User
 from django.utils import timezone
 from datetime import timedelta
-import random
+import random, secrets, string
+
+def _strong_password():
+    """Generate a cryptographically secure random password (dev seed only)."""
+    chars = string.ascii_letters + string.digits + '!@#$%^&*'
+    return ''.join(secrets.choice(chars) for _ in range(20))
 
 
 USERS = [
@@ -55,7 +60,7 @@ class Command(BaseCommand):
             user = User.objects.create_user(
                 username=username,
                 email=email,
-                password='student123' if not u.get('is_superuser') else 'admin123',
+                password=_strong_password(),  # dev seed: random strong password each run
             )
             user.is_active = is_active
             for k, v in u.items():

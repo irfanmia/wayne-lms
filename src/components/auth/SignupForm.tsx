@@ -29,7 +29,8 @@ export default function SignupForm() {
     if (!lastName.trim()) errors.lastName = 'Last name is required';
     if (!username.trim()) errors.username = 'Username is required';
     if (!email.trim()) errors.email = 'Email is required';
-    if (password.length < 6) errors.password = 'Password must be at least 6 characters';
+    if (password.length < 8) errors.password = 'Password must be at least 8 characters';
+    else if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) errors.password = 'Password must contain at least one uppercase letter and one number';
     if (password !== confirmPassword) errors.confirmPassword = 'Passwords do not match';
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;

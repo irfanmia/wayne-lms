@@ -136,7 +136,9 @@ class AdminUserListView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         username = request.data.get('username')
         email = request.data.get('email')
-        password = request.data.get('password', 'changeme123')
+        password = request.data.get('password')
+        if not password:
+            return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
         role = request.data.get('role', 'Student')
         display_name = request.data.get('display_name', '')
 
