@@ -8,6 +8,7 @@ class Category(models.Model):
     name_es = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(unique=True)
     icon = models.CharField(max_length=50, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subcategories')
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -28,7 +29,8 @@ class Course(models.Model):
     description_ar = models.TextField(blank=True)
     description_es = models.TextField(blank=True)
     thumbnail = models.ImageField(upload_to='courses/thumbnails/', blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='courses')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='courses')
+    sub_category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='sub_courses')
     instructor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='taught_courses')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
     price_type = models.CharField(max_length=20, choices=PRICE_TYPE, default='free')

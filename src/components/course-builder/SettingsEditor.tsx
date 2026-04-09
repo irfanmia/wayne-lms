@@ -4,8 +4,9 @@ import { useCourseBuilder } from './CourseBuilderLayout';
 import api from '@/lib/api';
 
 const settingsSections = ['Main', 'Access', 'Prerequisites', 'Course Files', 'Certificate', 'Course Page'] as const;
-const categories = ['Programming', 'Web Development', 'AI & ML', 'Data Science', 'Mobile Dev', 'DevOps', 'Design'];
 const levels = ['Beginner', 'Intermediate', 'Advanced', 'All Levels'];
+
+type CategoryItem = { id: number; name: string; slug: string; parent: number | null; subcategories: CategoryItem[] };
 // prereqCoursesList populated from API in useEffect below
 const certificateTemplates = [
   { id: 'default', name: 'Default System', color: 'bg-gray-100' },
@@ -49,6 +50,54 @@ export default function SettingsEditor() {
   const [activeSection, setActiveSection] = useState<string>('Main');
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  /* Categories */
+  const [allCategories, setAllCategories] = useState<CategoryItem[]>([]);
+  const [categoryId, setCategoryId] = useState<number | ''>('');
+  const [subCategoryId, setSubCategoryId] = useState<number | ''>('');
+  const [showNewCatModal, setShowNewCatModal] = useState(false);
+  const [showNewSubCatModal, setShowNewSubCatModal] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [newSubCatName, setNewSubCatName] = useState('');
+  const [catSaving, setCatSaving] = useState(false);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.getCategories();
+      const list = res.results || res;
+      if (Array.isArray(list)) setAllCategories(list as CategoryItem[]);
+    } catch { /* ignore */ }
+  };
+
+  useEffect(() => { fetchCategories(); }, []);
+
+  const selectedCategory = allCategories.find(c => c.id === categoryId);
+  const subcategories = selectedCategory?.subcategories || [];
+
+  const handleCreateCategory = async () => {
+    if (!newCatName.trim()) return;
+    setCatSaving(true);
+    try {
+      const res = await api.createCategory({ name: newCatName.trim() });
+      await fetchCategories();
+      setCategoryId(res.id);
+      setSubCategoryId('');
+      setNewCatName('');
+      setShowNewCatModal(false);
+    } catch { /* ignore */ } finally { setCatSaving(false); }
+  };
+
+  const handleCreateSubCategory = async () => {
+    if (!newSubCatName.trim() || !categoryId) return;
+    setCatSaving(true);
+    try {
+      const res = await api.createCategory({ name: newSubCatName.trim(), parent: categoryId });
+      await fetchCategories();
+      setSubCategoryId(res.id);
+      setNewSubCatName('');
+      setShowNewSubCatModal(false);
+    } catch { /* ignore */ } finally { setCatSaving(false); }
+  };
 
   /* Main */
   const [name, setName] = useState('');
@@ -94,7 +143,9 @@ export default function SettingsEditor() {
     if (!courseData || isNewCourse) return;
     setName(courseData.title || '');
     setSlug(courseData.slug || '');
-    setCategory(courseData.category || '');
+    setCategory(courseData.category?.name || courseData.category || '');
+    if (courseData.category?.id) setCategoryId(courseData.category.id);
+    if (courseData.sub_category?.id) setSubCategoryId(courseData.sub_category.id);
     setLevel(courseData.level || 'Beginner');
     setInstructor(courseData.instructor || '');
     setDescription(courseData.description || '');
@@ -123,8 +174,9 @@ export default function SettingsEditor() {
     setCtxName(name);
   }, [name, setCtxName]);
   useEffect(() => {
-    setCtxCategory(category);
-  }, [category, setCtxCategory]);
+    const catName = allCategories.find(c => c.id === categoryId)?.name || category;
+    setCtxCategory(catName);
+  }, [categoryId, category, allCategories, setCtxCategory]);
 
   // Fetch all courses for prerequisites search
   useEffect(() => {
@@ -151,7 +203,7 @@ export default function SettingsEditor() {
   const validateAndSave = async () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = 'Course name is required';
-    if (!category) newErrors.category = 'Category is required';
+    if (!categoryId) newErrors.category = 'Category is required';
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -163,7 +215,8 @@ export default function SettingsEditor() {
     const generatedSlug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const payload = {
       title: { en: name.trim(), ar: '', es: '' },
-      category,
+      category_id: categoryId || null,
+      sub_category_id: subCategoryId || null,
       level: level.toLowerCase(),
       description: { en: description.trim() || name.trim(), ar: '', es: '' },
       is_featured: featured,
@@ -283,14 +336,26 @@ export default function SettingsEditor() {
 
             <div className="grid grid-cols-2 gap-4">
               <Field label="Category" required>
-                <select
-                  className={errors.category ? inputErrorCls : inputCls}
-                  value={category}
-                  onChange={e => { setCategory(e.target.value); setErrors(prev => ({ ...prev, category: '' })); }}
-                >
-                  <option value="">Select a category...</option>
-                  {categories.map(c => <option key={c}>{c}</option>)}
-                </select>
+                <div className="flex gap-2">
+                  <select
+                    className={`flex-1 ${errors.category ? inputErrorCls : inputCls}`}
+                    value={categoryId}
+                    onChange={e => {
+                      setCategoryId(e.target.value ? Number(e.target.value) : '');
+                      setSubCategoryId('');
+                      setErrors(prev => ({ ...prev, category: '' }));
+                    }}
+                  >
+                    <option value="">Select a category...</option>
+                    {allCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewCatModal(true)}
+                    className="px-3 py-2 text-sm bg-orange-50 border border-orange-200 text-orange-600 rounded-lg hover:bg-orange-100 transition whitespace-nowrap cursor-pointer"
+                    title="Create new category"
+                  >+ New</button>
+                </div>
                 {errors.category && <p className="text-xs text-red-500 mt-1">{errors.category}</p>}
               </Field>
               <Field label="Level">
@@ -299,6 +364,83 @@ export default function SettingsEditor() {
                 </select>
               </Field>
             </div>
+
+            {/* Sub-category row */}
+            <Field label="Sub-category (optional)">
+              <div className="flex gap-2">
+                <select
+                  className={`flex-1 ${inputCls} ${!categoryId ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  value={subCategoryId}
+                  onChange={e => setSubCategoryId(e.target.value ? Number(e.target.value) : '')}
+                  disabled={!categoryId}
+                >
+                  <option value="">{categoryId ? 'No sub-category' : 'Select a category first'}</option>
+                  {subcategories.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setShowNewSubCatModal(true)}
+                  disabled={!categoryId}
+                  className={`px-3 py-2 text-sm border rounded-lg transition whitespace-nowrap cursor-pointer ${
+                    categoryId
+                      ? 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'
+                      : 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed'
+                  }`}
+                  title="Create new sub-category"
+                >+ New</button>
+              </div>
+            </Field>
+
+            {/* Create Category Modal */}
+            {showNewCatModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowNewCatModal(false)}>
+                <div className="bg-white rounded-xl p-6 w-96 shadow-2xl" onClick={e => e.stopPropagation()}>
+                  <h4 className="text-base font-semibold mb-4">Create New Category</h4>
+                  <input
+                    className={inputCls}
+                    value={newCatName}
+                    onChange={e => setNewCatName(e.target.value)}
+                    placeholder="Category name"
+                    autoFocus
+                    onKeyDown={e => e.key === 'Enter' && handleCreateCategory()}
+                  />
+                  <div className="flex gap-3 mt-4 justify-end">
+                    <button onClick={() => setShowNewCatModal(false)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 cursor-pointer">Cancel</button>
+                    <button
+                      onClick={handleCreateCategory}
+                      disabled={catSaving || !newCatName.trim()}
+                      className="px-4 py-2 text-sm bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 cursor-pointer"
+                    >{catSaving ? 'Creating...' : 'Create'}</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Create Sub-category Modal */}
+            {showNewSubCatModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowNewSubCatModal(false)}>
+                <div className="bg-white rounded-xl p-6 w-96 shadow-2xl" onClick={e => e.stopPropagation()}>
+                  <h4 className="text-base font-semibold mb-1">Create New Sub-category</h4>
+                  <p className="text-xs text-gray-400 mb-4">Under: <strong>{selectedCategory?.name}</strong></p>
+                  <input
+                    className={inputCls}
+                    value={newSubCatName}
+                    onChange={e => setNewSubCatName(e.target.value)}
+                    placeholder="Sub-category name"
+                    autoFocus
+                    onKeyDown={e => e.key === 'Enter' && handleCreateSubCategory()}
+                  />
+                  <div className="flex gap-3 mt-4 justify-end">
+                    <button onClick={() => setShowNewSubCatModal(false)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 cursor-pointer">Cancel</button>
+                    <button
+                      onClick={handleCreateSubCategory}
+                      disabled={catSaving || !newSubCatName.trim()}
+                      className="px-4 py-2 text-sm bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 cursor-pointer"
+                    >{catSaving ? 'Creating...' : 'Create'}</button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <Field label="Instructor"><input className={inputCls} value={instructor} onChange={e => setInstructor(e.target.value)} placeholder="Instructor name" /></Field>
 

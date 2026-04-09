@@ -423,6 +423,10 @@ class ApiClient {
     return res.json();
   }
 
+  // Categories
+  async getCategories() { return this.request('/courses/categories/'); }
+  async createCategory(data: Record<string, unknown>) { return this.request('/courses/categories/', { method: 'POST', body: JSON.stringify(data) }); }
+
   // Prerequisites
   async getCoursePrerequisites(slug: string) { return this.request(`/courses/${slug}/prerequisites/`); }
 

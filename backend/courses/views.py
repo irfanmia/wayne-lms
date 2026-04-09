@@ -6,23 +6,93 @@ from .serializers import (CategorySerializer, CourseListSerializer, CourseDetail
                           EnrollmentSerializer, LessonProgressSerializer)
 
 
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all()
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.filter(parent=None).prefetch_related('subcategories')
     serializer_class = CategorySerializer
     lookup_field = 'slug'
 
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAdminUser()]
+        return [permissions.AllowAny()]
 
-class CourseViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Course.objects.filter(is_published=True).select_related('category', 'instructor')
+    def perform_create(self, serializer):
+        import re
+        name = serializer.validated_data.get('name', '')
+        slug = serializer.validated_data.get('slug') or re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+        # ensure uniqueness
+        base = slug
+        i = 1
+        while Category.objects.filter(slug=slug).exists():
+            slug = f'{base}-{i}'
+            i += 1
+        serializer.save(slug=slug)
+
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.select_related('category', 'sub_category', 'instructor')
     lookup_field = 'slug'
     filterset_fields = ['category__slug', 'level', 'price_type', 'is_featured']
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'title']
 
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAdminUser()]
+        return [permissions.AllowAny()]
+
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return CourseDetailSerializer
         return CourseListSerializer
+
+    def perform_create(self, serializer):
+        import re
+        data = self.request.data
+        title_data = data.get('title', {})
+        title = title_data.get('en', '') if isinstance(title_data, dict) else str(title_data)
+        slug = data.get('slug') or re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        base = slug
+        i = 1
+        while Course.objects.filter(slug=slug).exists():
+            slug = f'{base}-{i}'
+            i += 1
+        category_id = data.get('category_id')
+        sub_category_id = data.get('sub_category_id')
+        category = Category.objects.filter(id=category_id).first() if category_id else None
+        sub_category = Category.objects.filter(id=sub_category_id).first() if sub_category_id else None
+        desc_data = data.get('description', {})
+        description = desc_data.get('en', '') if isinstance(desc_data, dict) else str(desc_data)
+        serializer.save(
+            slug=slug,
+            title=title,
+            description=description,
+            category=category,
+            sub_category=sub_category,
+        )
+
+    def perform_update(self, serializer):
+        data = self.request.data
+        title_data = data.get('title', {})
+        title = title_data.get('en', '') if isinstance(title_data, dict) else str(title_data)
+        category_id = data.get('category_id')
+        sub_category_id = data.get('sub_category_id')
+        category = Category.objects.filter(id=category_id).first() if category_id else None
+        sub_category = Category.objects.filter(id=sub_category_id).first() if sub_category_id else None
+        desc_data = data.get('description', {})
+        description = desc_data.get('en', '') if isinstance(desc_data, dict) else str(desc_data)
+        kwargs = {}
+        if title:
+            kwargs['title'] = title
+        if description:
+            kwargs['description'] = description
+        if category_id is not None:
+            kwargs['category'] = category
+        if sub_category_id is not None:
+            kwargs['sub_category'] = sub_category
+        elif 'sub_category_id' in data and sub_category_id is None:
+            kwargs['sub_category'] = None
+        serializer.save(**kwargs)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def enroll(self, request, slug=None):

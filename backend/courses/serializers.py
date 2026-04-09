@@ -4,9 +4,16 @@ from accounts.serializers import UserSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    subcategories = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'name_ar', 'name_es', 'slug', 'icon', 'parent', 'subcategories']
+
+    def get_subcategories(self, obj):
+        if obj.parent is not None:
+            return []  # don't recurse into subcategory children
+        return CategorySerializer(obj.subcategories.all(), many=True).data
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -40,12 +47,13 @@ class ModuleSerializer(serializers.ModelSerializer):
 
 class CourseListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    sub_category = CategorySerializer(read_only=True)
     instructor = UserSerializer(read_only=True)
     total_lectures = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'slug', 'description', 'thumbnail', 'category',
+        fields = ['id', 'title', 'slug', 'description', 'thumbnail', 'category', 'sub_category',
                   'instructor', 'level', 'price_type', 'price', 'is_featured',
                   'total_lectures', 'created_at']
 
