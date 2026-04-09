@@ -65,8 +65,17 @@ export default function SettingsEditor() {
     try {
       const res = await api.getCategories();
       const list = res.results || res;
-      if (Array.isArray(list)) setAllCategories(list as CategoryItem[]);
-    } catch { /* ignore */ }
+      if (Array.isArray(list)) {
+        // Normalise: ensure subcategories is always an array
+        const normalised = (list as CategoryItem[]).map(c => ({
+          ...c,
+          subcategories: Array.isArray(c.subcategories) ? c.subcategories : [],
+        }));
+        setAllCategories(normalised);
+      }
+    } catch (e) {
+      console.error('Failed to load categories', e);
+    }
   };
 
   useEffect(() => { fetchCategories(); }, []);
@@ -143,9 +152,18 @@ export default function SettingsEditor() {
     if (!courseData || isNewCourse) return;
     setName(courseData.title || '');
     setSlug(courseData.slug || '');
-    setCategory(courseData.category?.name || courseData.category || '');
-    if (courseData.category?.id) setCategoryId(courseData.category.id);
-    if (courseData.sub_category?.id) setSubCategoryId(courseData.sub_category.id);
+    // category can be an object {id, name} or a plain string from older API
+    const cat = courseData.category;
+    if (cat && typeof cat === 'object') {
+      setCategory(cat.name || '');
+      if (cat.id) setCategoryId(cat.id);
+    } else if (typeof cat === 'string') {
+      setCategory(cat);
+    }
+    const subCat = courseData.sub_category;
+    if (subCat && typeof subCat === 'object' && subCat.id) {
+      setSubCategoryId(subCat.id);
+    }
     setLevel(courseData.level || 'Beginner');
     setInstructor(courseData.instructor || '');
     setDescription(courseData.description || '');
@@ -174,7 +192,7 @@ export default function SettingsEditor() {
     setCtxName(name);
   }, [name, setCtxName]);
   useEffect(() => {
-    const catName = allCategories.find(c => c.id === categoryId)?.name || category;
+    const catName = allCategories.find(c => c.id === categoryId)?.name || category || '';
     setCtxCategory(catName);
   }, [categoryId, category, allCategories, setCtxCategory]);
 

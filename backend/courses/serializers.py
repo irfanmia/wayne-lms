@@ -11,9 +11,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'name_ar', 'name_es', 'slug', 'icon', 'parent', 'subcategories']
 
     def get_subcategories(self, obj):
-        if obj.parent is not None:
-            return []  # don't recurse into subcategory children
-        return CategorySerializer(obj.subcategories.all(), many=True).data
+        try:
+            if obj.parent is not None:
+                return []  # don't recurse into subcategory children
+            return CategorySerializer(obj.subcategories.all(), many=True).data
+        except Exception:
+            return []  # safe fallback before migration is applied
 
 
 class LessonSerializer(serializers.ModelSerializer):

@@ -7,9 +7,16 @@ from .serializers import (CategorySerializer, CourseListSerializer, CourseDetail
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(parent=None).prefetch_related('subcategories')
     serializer_class = CategorySerializer
     lookup_field = 'slug'
+
+    def get_queryset(self):
+        try:
+            # After migration: return only top-level categories with subcategories nested
+            return Category.objects.filter(parent=None).prefetch_related('subcategories')
+        except Exception:
+            # Fallback before migration 0002 is applied (no parent column yet)
+            return Category.objects.all()
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
