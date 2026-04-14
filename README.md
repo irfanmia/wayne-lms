@@ -368,3 +368,71 @@ Course content stored as multilingual JSON: `{"en": "...", "ar": "...", "es": ".
 ## 📄 License
 
 Private project — Wayne LMS © 2026
+
+---
+
+## 🤝 Project Handover
+
+> This section is for the incoming development team.
+
+### Access & Credentials
+
+| Resource | Details |
+|---|---|
+| **GitHub Repo** | https://github.com/irfanmia/wayne-lms |
+| **Frontend (Vercel)** | https://wayne-lms.vercel.app |
+| **API** | https://waynelmsapi.fiveniners.com/api/v1 |
+| **Django Admin** | https://waynelmsapi.fiveniners.com/admin/ — `admin / admin123` |
+| **Frontend Admin** | https://wayne-lms.vercel.app/admin/ — `admin@wayne-lms.com / admin123` |
+
+### Server — DigitalOcean Droplet
+
+| Field | Value |
+|---|---|
+| Provider | DigitalOcean (Bangalore BLR1) |
+| IP | 139.59.70.140 |
+| App path | `/opt/wayne-lms/` |
+| Deploy script | `/opt/wayne-lms/deploy.sh` |
+| Backend service | Gunicorn behind Nginx |
+| SSH key | Request from project owner (irfan@webcoffee.in) |
+
+### Vercel Environment Variables
+
+| Variable | Notes |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Points to the Django API |
+| `GITHUB_CLIENT_ID` | GitHub OAuth App (Wayne LMS) |
+| `GITHUB_CLIENT_SECRET` | ⚠️ Regenerate before use |
+| `NEXTAUTH_SECRET` | Random secret for NextAuth |
+| `NEXTAUTH_URL` | https://wayne-lms.vercel.app |
+
+### GitHub OAuth App
+
+- **App name:** Wayne LMS
+- **Client ID:** `Ov23lirQZX6lgJu4sSRM`
+- **Callback URL:** `https://wayne-lms.vercel.app/api/auth/callback/github`
+- ⚠️ Regenerate the client secret via GitHub → Settings → Developer settings → OAuth Apps
+
+### Onboarding Checklist for New Team
+
+- [ ] Get added as collaborator on this GitHub repo
+- [ ] Get Vercel project access from irfan@webcoffee.in
+- [ ] Add your SSH public key to the DigitalOcean droplet
+- [ ] Regenerate GitHub OAuth client secret
+- [ ] Change all admin passwords (`admin123`)
+- [ ] Review `.env` on server for all backend secrets
+- [ ] Set up local dev environment (see Getting Started above)
+
+### Pending Items
+
+- [ ] Custom domain for frontend (currently on `.vercel.app`)
+- [ ] Logo (to be provided by client)
+- [ ] Cloudflare R2 storage bucket setup
+- [ ] AWS SES for transactional email
+- [ ] Stripe / PayPal payment integration
+
+### Contact
+
+- **Project Owner:** Muhammed Irfan Ali C T
+- **Email:** irfan@webcoffee.in
+- **Telegram:** @irfan_abdulrouf
