@@ -5,13 +5,15 @@ import Link from 'next/link';
 import Badge from '@/components/ui/Badge';
 import ConceptMap from '@/components/practice/ConceptMap';
 import PracticeStats from '@/components/practice/PracticeStats';
-import staticTracks from '@/data/tracks.json';
-import staticExercises from '@/data/exercises.json';
 import conceptsData from '@/data/concepts.json';
 import { formatNumber } from '@/lib/utils';
 import { useI18n, tContent } from '@/lib/i18n';
 import api from '@/lib/api';
 import { ConceptMapNode, ConceptMapEdge, PracticeProgress, PracticeBadge } from '@/data/mockPracticeData';
+
+// concepts.json is intentionally kept — it's the visual layout for the
+// concept graph (x/y coords, prerequisite edges, per-user status). The
+// node names themselves mirror the backend concept list per track.
 
 // Map concept status strings
 function mapStatus(s: string): 'completed' | 'in_progress' | 'not_started' | 'locked' {
@@ -41,28 +43,46 @@ export default function TrackDetailPage({ params }: { params: Promise<{ slug: st
   const { slug } = use(params);
   const { t, locale } = useI18n();
 
-  const staticTrack = staticTracks.find(t => t.slug === slug);
-  const [track, setTrack] = useState(staticTrack);
-  const [exercises, setExercises] = useState(staticExercises.filter(e => e.trackSlug === slug));
-  const [isOffline, setIsOffline] = useState(false);
+  const [track, setTrack] = useState<any>(null);
+  const [exercises, setExercises] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFoundState, setNotFoundState] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedConcept, setSelectedConcept] = useState<string | null>(null);
 
   const trackConcepts = conceptsData.filter(c => c.trackSlug === slug);
 
   useEffect(() => {
-    api.getTrack(slug)
-      .then((data) => { setTrack(data); setIsOffline(false); })
-      .catch(() => { setTrack(staticTrack); setIsOffline(true); });
-    api.getExercises(slug)
-      .then((data) => {
-        const results = Array.isArray(data) ? data : data.results || data;
-        if (results.length > 0) setExercises(results);
+    setLoading(true);
+    Promise.all([
+      api.getTrack(slug),
+      api.getExercises(slug),
+    ])
+      .then(([trackData, exData]) => {
+        setTrack(trackData);
+        const results = Array.isArray(exData) ? exData : exData.results || exData;
+        setExercises(results);
+        setError(null);
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (err?.status === 404) {
+          setNotFoundState(true);
+        } else {
+          setError(err?.message || 'Failed to load track');
+        }
+      })
+      .finally(() => setLoading(false));
   }, [slug]);
 
-  if (!track) notFound();
+  if (notFoundState) notFound();
+  if (loading || !track) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        {error ? <span>Couldn&apos;t load track: {error}</span> : <span>Loading track…</span>}
+      </div>
+    );
+  }
 
   const description = tContent(track.description, locale);
 
@@ -143,9 +163,9 @@ export default function TrackDetailPage({ params }: { params: Promise<{ slug: st
             <h2 className="font-bold text-gray-900 text-sm">{track.name}</h2>
           </div>
 
-          {isOffline && (
-            <div className="mb-3 flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" /> Offline mode
+          {error && (
+            <div className="mb-3 flex items-center gap-1.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full" /> {error}
             </div>
           )}
 

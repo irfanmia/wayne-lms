@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, use } from 'react';
-import staticCourses from '@/data/courses.json';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import PlatformBadge from '@/components/ui/PlatformBadge';
@@ -27,15 +26,15 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [liveClasses, setLiveClasses] = useState<any[]>([]);
 
-  // Try API, fallback to static
-  const staticCourse = staticCourses.find(c => c.slug === slug);
-  const [course, setCourse] = useState(staticCourse);
-  const [isOffline, setIsOffline] = useState(false);
+  const [course, setCourse] = useState<any>(null);
+  const [loadingCourse, setLoadingCourse] = useState(true);
+  const [courseError, setCourseError] = useState<string | null>(null);
+  const [related, setRelated] = useState<any[]>([]);
 
   useEffect(() => {
+    setLoadingCourse(true);
     api.getCourse(slug)
       .then((data) => {
-        // Map snake_case API fields to camelCase expected by frontend
         const mapped = {
           ...data,
           whatYouLearn: data.whatYouLearn || data.what_youll_learn || data.what_you_learn || [],
@@ -54,9 +53,20 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
           industry_meta: data.industry_meta || {},
         };
         setCourse(mapped);
-        setIsOffline(false);
+        setCourseError(null);
+        // Fetch related courses in same category
+        const catSlug = mapped.categorySlug || mapped.category_slug;
+        if (catSlug) {
+          api.getCourses({ category: catSlug })
+            .then((res: any) => {
+              const items = Array.isArray(res) ? res : res.results || res;
+              setRelated(items.filter((c: any) => c.slug !== slug).slice(0, 3));
+            })
+            .catch(() => setRelated([]));
+        }
       })
-      .catch(() => { setCourse(staticCourse); setIsOffline(true); });
+      .catch((err) => { setCourseError(err?.message || 'Failed to load course'); })
+      .finally(() => setLoadingCourse(false));
   }, [slug]);
 
   // Check enrollment status & wishlist
@@ -91,8 +101,16 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
     return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
+  if (loadingCourse) {
+    return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-400">Loading course…</div>;
+  }
   if (!course) {
-    return <div className="max-w-7xl mx-auto px-4 py-20 text-center"><h1 className="text-2xl font-bold text-gray-900">{t('courseDetail.notFound')}</h1></div>;
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <h1 className="text-2xl font-bold text-gray-900">{t('courseDetail.notFound')}</h1>
+        {courseError && <p className="mt-2 text-sm text-red-600">{courseError}</p>}
+      </div>
+    );
   }
 
   const handleEnroll = async () => {
@@ -173,7 +191,6 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isIndustryCourse = (course as any).course_type === 'industry' && Object.keys(industryMeta).length > 0;
 
-  const related = staticCourses.filter(c => c.categorySlug === course.categorySlug && c.slug !== course.slug).slice(0, 3);
   const totalLessons = (course.curriculum || []).reduce((sum: number, m: { lessons: unknown[] }) => sum + m.lessons.length, 0);
 
   const tabLabels: Record<string, string> = {
@@ -199,9 +216,9 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
             <span>/</span>
             <span>{category}</span>
           </div>
-          {isOffline && (
-            <div className="mb-4 inline-flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" /> Offline mode
+          {courseError && (
+            <div className="mb-4 inline-flex items-center gap-1.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full" /> {courseError}
             </div>
           )}
           <div className="flex flex-col lg:flex-row gap-8">

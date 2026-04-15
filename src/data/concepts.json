@@ -148,5 +148,1435 @@
       "algorithms"
     ],
     "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "javascript",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "javascript",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "javascript",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "javascript",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "javascript",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "javascript",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "javascript",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "javascript",
+    "name": "Arrays",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "javascript",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "javascript",
+    "name": "Classes",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "javascript",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "javascript",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "java",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "java",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "java",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "java",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "java",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "java",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "java",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "java",
+    "name": "Arrays & Lists",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "java",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "java",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "java",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "java",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "typescript",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "typescript",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "typescript",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "typescript",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "typescript",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "typescript",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "typescript",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "typescript",
+    "name": "Arrays & Lists",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "typescript",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "typescript",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "typescript",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "typescript",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "rust",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "rust",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "rust",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "rust",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "rust",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "rust",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "rust",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "rust",
+    "name": "Arrays & Lists",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "rust",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "structs",
+    "trackSlug": "rust",
+    "name": "Structs & Traits",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "rust",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "rust",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "go",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "go",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "go",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "go",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "go",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "go",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "go",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "go",
+    "name": "Arrays & Slices",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "go",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "structs",
+    "trackSlug": "go",
+    "name": "Structs & Interfaces",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "go",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "go",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "csharp",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "csharp",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "csharp",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "csharp",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "csharp",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "csharp",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "csharp",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "csharp",
+    "name": "Arrays & Lists",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "csharp",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "csharp",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "csharp",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "csharp",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "cpp",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "cpp",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "cpp",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "cpp",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "cpp",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "cpp",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "cpp",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "cpp",
+    "name": "Arrays & Vectors",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "cpp",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "cpp",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "cpp",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "cpp",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "ruby",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "ruby",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "ruby",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "ruby",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "ruby",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "ruby",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "ruby",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "ruby",
+    "name": "Arrays",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "ruby",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "ruby",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "ruby",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "ruby",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "swift",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "swift",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "swift",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "swift",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "swift",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "swift",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "swift",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "swift",
+    "name": "Arrays",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "swift",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "swift",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "swift",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "swift",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "kotlin",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "kotlin",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "kotlin",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "kotlin",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "strings",
+    "trackSlug": "kotlin",
+    "name": "Strings",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "numbers",
+    "trackSlug": "kotlin",
+    "name": "Numbers",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "conditionals",
+    "trackSlug": "kotlin",
+    "name": "Conditionals",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "arrays",
+    "trackSlug": "kotlin",
+    "name": "Arrays",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "strings"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "loops",
+    "trackSlug": "kotlin",
+    "name": "Loops",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "numbers"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "classes",
+    "trackSlug": "kotlin",
+    "name": "Classes & Objects",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "conditionals"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "algorithms",
+    "trackSlug": "kotlin",
+    "name": "Algorithms",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "arrays"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "error-handling",
+    "trackSlug": "kotlin",
+    "name": "Error Handling",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "loops"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "basics",
+    "trackSlug": "sql",
+    "name": "Basics",
+    "x": 150,
+    "y": 50,
+    "prerequisites": [],
+    "status": "available"
+  },
+  {
+    "slug": "control-flow",
+    "trackSlug": "sql",
+    "name": "Control Flow",
+    "x": 400,
+    "y": 50,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "functions",
+    "trackSlug": "sql",
+    "name": "Functions",
+    "x": 650,
+    "y": 50,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "data-structures",
+    "trackSlug": "sql",
+    "name": "Data Structures",
+    "x": 150,
+    "y": 200,
+    "prerequisites": [
+      "basics"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "select-queries",
+    "trackSlug": "sql",
+    "name": "SELECT Queries",
+    "x": 400,
+    "y": 200,
+    "prerequisites": [
+      "control-flow"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "filtering",
+    "trackSlug": "sql",
+    "name": "Filtering (WHERE)",
+    "x": 650,
+    "y": 200,
+    "prerequisites": [
+      "functions"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "sorting",
+    "trackSlug": "sql",
+    "name": "Sorting (ORDER BY)",
+    "x": 150,
+    "y": 350,
+    "prerequisites": [
+      "data-structures"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "aggregation",
+    "trackSlug": "sql",
+    "name": "Aggregation",
+    "x": 400,
+    "y": 350,
+    "prerequisites": [
+      "select-queries"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "joins",
+    "trackSlug": "sql",
+    "name": "JOINs",
+    "x": 650,
+    "y": 350,
+    "prerequisites": [
+      "filtering"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "subqueries",
+    "trackSlug": "sql",
+    "name": "Subqueries",
+    "x": 150,
+    "y": 500,
+    "prerequisites": [
+      "sorting"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "insert-update",
+    "trackSlug": "sql",
+    "name": "INSERT & UPDATE",
+    "x": 400,
+    "y": 500,
+    "prerequisites": [
+      "aggregation"
+    ],
+    "status": "locked"
+  },
+  {
+    "slug": "window-functions",
+    "trackSlug": "sql",
+    "name": "Window Functions",
+    "x": 650,
+    "y": 500,
+    "prerequisites": [
+      "joins"
+    ],
+    "status": "locked"
   }
 ]

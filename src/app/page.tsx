@@ -9,15 +9,33 @@ import CountUp from '@/components/ui/CountUp';
 import GridBackground from '@/components/ui/GridBackground';
 import FloatingParticles from '@/components/ui/FloatingParticles';
 import DecorativeArcs from '@/components/ui/DecorativeArcs';
-import tracks from '@/data/tracks.json';
-import courses from '@/data/courses.json';
 import { useI18n } from '@/lib/i18n';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import api from '@/lib/api';
 
 export default function Home() {
+  const { t } = useI18n();
+  const [tracks, setTracks] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+
+  useEffect(() => {
+    api.getTracks()
+      .then((d: any) => {
+        const items = Array.isArray(d) ? d : d.results || d;
+        setTracks(items);
+      })
+      .catch(() => setTracks([]));
+    api.getCourses()
+      .then((d: any) => {
+        const items = Array.isArray(d) ? d : d.results || d;
+        setCourses(items);
+      })
+      .catch(() => setCourses([]));
+  }, []);
+
   const featuredTracks = tracks.slice(0, 3);
   const featuredCourses = courses.slice(0, 3);
-  const { t } = useI18n();
 
   const heroWords = (t('hero.title1') as string).split(' ');
 

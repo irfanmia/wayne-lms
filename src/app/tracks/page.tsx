@@ -4,7 +4,6 @@ import TrackCard from '@/components/tracks/TrackCard';
 import AnimatedSection from '@/components/ui/AnimatedSection';
 import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerContainer';
 import GridBackground from '@/components/ui/GridBackground';
-import staticTracks from '@/data/tracks.json';
 import api from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 
@@ -13,25 +12,23 @@ export default function TracksPage() {
   const [search, setSearch] = useState('');
   const [difficulty, setDifficulty] = useState('all');
   const [category, setCategory] = useState('all');
-  const [tracks, setTracks] = useState(staticTracks);
-  const [isOffline, setIsOffline] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [tracks, setTracks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     api.getTracks()
       .then((data) => {
         const results = Array.isArray(data) ? data : data.results || data;
-        if (results.length > 0) {
-          setTracks(results);
-          setIsOffline(false);
-        } else {
-          setTracks(staticTracks);
-          setIsOffline(true);
-        }
+        setTracks(results);
+        setError(null);
       })
-      .catch(() => {
-        setTracks(staticTracks);
-        setIsOffline(true);
-      });
+      .catch((err) => {
+        setError(err?.message || 'Failed to load tracks');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const filtered = tracks.filter(t => {
@@ -50,9 +47,9 @@ export default function TracksPage() {
           <div className="mb-10">
             <h1 className="text-4xl font-extrabold text-gray-900 mb-3 font-heading">{t('tracksPage.title')}</h1>
             <p className="text-gray-500 text-lg">{t('tracksPage.subtitle')}</p>
-            {isOffline && (
-              <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
-                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" /> Offline mode — showing cached data
+            {error && !loading && (
+              <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-red-600 bg-red-50 border border-red-200 rounded-full px-3 py-1">
+                <span className="w-1.5 h-1.5 bg-red-500 rounded-full" /> Couldn&apos;t reach server: {error}
               </div>
             )}
           </div>
@@ -89,7 +86,10 @@ export default function TracksPage() {
             </StaggerItem>
           ))}
         </StaggerContainer>
-        {filtered.length === 0 && (
+        {loading && tracks.length === 0 && (
+          <div className="text-center py-20 text-gray-400">Loading tracks…</div>
+        )}
+        {!loading && filtered.length === 0 && (
           <div className="text-center py-20 text-gray-400">{t('tracksPage.noResults')}</div>
         )}
       </div>
