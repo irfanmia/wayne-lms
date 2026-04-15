@@ -13,6 +13,7 @@ CONCEPTS = [
     {'title': 'Data Structures', 'slug': 'data-structures', 'order': 4, 'icon': '🗂️', 'description': 'Work with lists, dictionaries, sets, and other data structures.'},
     {'title': 'OOP', 'slug': 'oop', 'order': 5, 'icon': '🏗️', 'description': 'Object-oriented programming with classes and inheritance.'},
     {'title': 'File I/O', 'slug': 'file-io', 'order': 6, 'icon': '📁', 'description': 'Read from and write to files in Python.'},
+    {'title': 'Capstone Challenges', 'slug': 'capstone-challenges', 'order': 7, 'icon': '🏆', 'description': 'Integrative challenges that combine OOP, data structures, I/O, generators, decorators, and error handling.'},
 ]
 
 # Prerequisites: concept_slug -> [prerequisite_slugs]
@@ -22,6 +23,7 @@ PREREQS = {
     'data-structures': ['functions'],
     'oop': ['data-structures'],
     'file-io': ['variables'],
+    'capstone-challenges': ['oop', 'data-structures', 'file-io'],
 }
 
 EXERCISES = {
@@ -395,6 +397,133 @@ if parse_logs("") == {}:
 else:
     print(f"FAIL: empty logs got {parse_logs('')}")''',
             'solution': 'def parse_logs(log_string):\n    if not log_string.strip():\n        return {}\n    counts = {}\n    for line in log_string.strip().split("\\n"):\n        level = line.split(":")[0].strip()\n        counts[level] = counts.get(level, 0) + 1\n    return counts',
+        },
+    ],
+    'capstone-challenges': [
+        {
+            'title': 'Inventory Manager', 'slug': 'inventory-manager', 'difficulty': 'hard', 'points': 50, 'order': 1,
+            'description': 'Build a stateful InventoryManager class that parses CSV-like data, adds/removes/adjusts stock, and raises a custom exception on over-withdrawal.',
+            'instructions': (
+                'Implement `class InsufficientStockError(Exception)` and '
+                '`class InventoryManager` with:\n'
+                '- `__init__(data="")` parses lines like `"apples, 10"`; raises ValueError on bad lines.\n'
+                '- `add(name, qty)` / `remove(name, qty)` / `adjust(name, qty)` (remove raises InsufficientStockError if qty > current).\n'
+                '- `low_stock(threshold)` returns a sorted list of names with qty < threshold.\n'
+                '- `serialize()` returns a newline-joined "name,qty" string sorted by name.\n'
+                'Internal stock is stored in `self._stock` (dict).'
+            ),
+            'starter_code': 'class InsufficientStockError(Exception):\n    pass\n\nclass InventoryManager:\n    def __init__(self, data=""):\n        self._stock = {}\n        # Your code here\n\n    def add(self, name, qty):\n        pass\n\n    def remove(self, name, qty):\n        pass\n\n    def adjust(self, name, qty):\n        pass\n\n    def low_stock(self, threshold):\n        pass\n\n    def serialize(self):\n        pass\n',
+            'test_code': '''def _expect(cond, label):
+    print(("PASS" if cond else "FAIL") + ": " + label)
+
+inv = InventoryManager("apples, 10\\nbananas, 3\\ncherries, 8")
+_expect(inv.serialize() == "apples,10\\nbananas,3\\ncherries,8", "parse & serialize round-trip")
+inv.add("apples", 5)
+_expect(inv._stock["apples"] == 15, "add increases stock")
+inv.remove("bananas", 2)
+_expect(inv._stock["bananas"] == 1, "remove decreases stock")
+try:
+    inv.remove("bananas", 10)
+    _expect(False, "over-withdrawal raises InsufficientStockError")
+except InsufficientStockError:
+    _expect(True, "over-withdrawal raises InsufficientStockError")
+inv.adjust("cherries", 100)
+_expect(inv._stock["cherries"] == 100, "adjust sets exact quantity")
+inv.add("dates", 2)
+_expect(inv.low_stock(5) == ["bananas", "dates"], "low_stock filters & sorts")
+_expect(InventoryManager("").serialize() == "", "empty constructor yields empty serialize")
+try:
+    InventoryManager("bad line with no comma")
+    _expect(False, "bad parse raises ValueError")
+except ValueError:
+    _expect(True, "bad parse raises ValueError")''',
+            'solution': 'class InsufficientStockError(Exception):\n    pass\n\nclass InventoryManager:\n    def __init__(self, data=""):\n        self._stock = {}\n        if data.strip():\n            for line in data.strip().splitlines():\n                parts = [p.strip() for p in line.split(",")]\n                if len(parts) != 2:\n                    raise ValueError(f"Bad line: {line!r}")\n                name, qty = parts\n                self._stock[name] = int(qty)\n\n    def add(self, name, qty):\n        if qty < 0:\n            raise ValueError("qty must be non-negative")\n        self._stock[name] = self._stock.get(name, 0) + qty\n\n    def remove(self, name, qty):\n        current = self._stock.get(name, 0)\n        if qty > current:\n            raise InsufficientStockError(f"Cannot remove {qty} of {name!r}: only {current} in stock")\n        self._stock[name] = current - qty\n\n    def adjust(self, name, qty):\n        if qty < 0:\n            raise ValueError("qty must be non-negative")\n        self._stock[name] = qty\n\n    def low_stock(self, threshold):\n        return sorted(n for n, q in self._stock.items() if q < threshold)\n\n    def serialize(self):\n        return "\\n".join(f"{n},{q}" for n, q in sorted(self._stock.items()))',
+        },
+        {
+            'title': 'Event Log Aggregator', 'slug': 'event-log-aggregator', 'difficulty': 'hard', 'points': 50, 'order': 2,
+            'description': 'Parse a multi-line log, yield events via a generator, and compute severity counts, top errors, and per-minute buckets.',
+            'instructions': (
+                'Each log line looks like `"2026-04-15T08:00:00 INFO  user 42 logged in"` '
+                '(ISO timestamp, severity, message). Implement:\n'
+                '- `parse_events(text)` → **generator** yielding `{"ts", "severity", "message"}` dicts. Skip malformed/empty lines.\n'
+                '- `severity_counts(events)` → `{severity: count}` dict (must accept any iterable).\n'
+                '- `top_errors(events, n=3)` → list of `(message, count)` for severity == "ERROR", sorted desc.\n'
+                '- `per_minute(events)` → `{minute_iso: count}` where `minute_iso` is the timestamp truncated to minutes (first 16 chars).'
+            ),
+            'starter_code': 'from collections import Counter\n\ndef parse_events(text):\n    # yield dicts; use a generator\n    pass\n\ndef severity_counts(events):\n    pass\n\ndef top_errors(events, n=3):\n    pass\n\ndef per_minute(events):\n    pass\n',
+            'test_code': '''def _expect(cond, label):
+    print(("PASS" if cond else "FAIL") + ": " + label)
+
+LOG = """2026-04-15T08:00:01 INFO  user 42 logged in
+2026-04-15T08:00:05 ERROR db connection refused
+2026-04-15T08:00:10 WARN  slow query: users
+2026-04-15T08:01:00 ERROR db connection refused
+2026-04-15T08:01:30 INFO  user 7 logged in
+2026-04-15T08:01:45 ERROR cache miss storm
+malformed line with no timestamp
+2026-04-15T08:02:00 ERROR db connection refused"""
+
+events = list(parse_events(LOG))
+_expect(len(events) == 7, f"parse_events yields 7 events (got {len(events)})")
+_expect(events[0]["severity"] == "INFO", "first event severity == INFO")
+sc = severity_counts(iter(events))
+_expect(sc == {"INFO": 2, "ERROR": 4, "WARN": 1}, f"severity_counts (got {sc})")
+te = top_errors(events, n=2)
+_expect(te[0] == ("db connection refused", 3), f"top error is db connection (got {te})")
+_expect(len(te) == 2, "top_errors respects n")
+pm = per_minute(events)
+_expect(pm == {"2026-04-15T08:00": 3, "2026-04-15T08:01": 3, "2026-04-15T08:02": 1}, f"per_minute (got {pm})")
+_expect(hasattr(parse_events(LOG), "__next__"), "parse_events returns a generator")''',
+            'solution': 'from collections import Counter\n\ndef parse_events(text):\n    for line in text.splitlines():\n        line = line.strip()\n        if not line:\n            continue\n        parts = line.split(maxsplit=2)\n        if len(parts) < 3:\n            continue\n        ts, severity, message = parts\n        if "T" not in ts or not ts[:1].isdigit():\n            continue\n        yield {"ts": ts, "severity": severity, "message": message}\n\ndef severity_counts(events):\n    return dict(Counter(e["severity"] for e in events))\n\ndef top_errors(events, n=3):\n    c = Counter(e["message"] for e in events if e["severity"] == "ERROR")\n    return c.most_common(n)\n\ndef per_minute(events):\n    out = {}\n    for e in events:\n        minute = e["ts"][:16]\n        out[minute] = out.get(minute, 0) + 1\n    return out',
+        },
+        {
+            'title': 'Tiny State Machine', 'slug': 'tiny-state-machine', 'difficulty': 'hard', 'points': 50, 'order': 3,
+            'description': 'Build a decorator-based state machine: `@transition(from_state, to_state)` guards methods and records history.',
+            'instructions': (
+                'Implement:\n'
+                '- `class TransitionError(Exception)`.\n'
+                '- Decorator `@transition(from_state, to_state)` for Machine methods. At call time, raise `TransitionError` if `self.state != from_state`; otherwise run the method, append `(from_state, to_state)` to `self.history`, set `self.state = to_state`, and return the method result.\n'
+                '- `class Machine` with `__init__(initial_state)` storing `self.state` and `self.history = []` (history starts empty — initial state is not recorded).'
+            ),
+            'starter_code': 'class TransitionError(Exception):\n    pass\n\ndef transition(from_state, to_state):\n    def decorator(method):\n        def wrapper(self, *args, **kwargs):\n            # Your code here\n            pass\n        return wrapper\n    return decorator\n\nclass Machine:\n    def __init__(self, initial_state):\n        self.state = initial_state\n        self.history = []\n',
+            'test_code': '''def _expect(cond, label):
+    print(("PASS" if cond else "FAIL") + ": " + label)
+
+class Door(Machine):
+    def __init__(self):
+        super().__init__("closed")
+    @transition("closed", "open")
+    def open(self):
+        return "opened"
+    @transition("open", "closed")
+    def close(self):
+        return "closed"
+    @transition("closed", "locked")
+    def lock(self):
+        return "locked"
+    @transition("locked", "closed")
+    def unlock(self):
+        return "unlocked"
+
+d = Door()
+_expect(d.state == "closed", "initial state is closed")
+_expect(d.history == [], "history starts empty")
+r = d.open()
+_expect(r == "opened" and d.state == "open", "open() transitions and returns")
+_expect(d.history == [("closed", "open")], "history recorded")
+d.close()
+d.lock()
+_expect(d.state == "locked", "closed -> locked works")
+_expect(d.history == [("closed","open"), ("open","closed"), ("closed","locked")], "history accumulates")
+try:
+    d.open()
+    _expect(False, "open() from locked raises TransitionError")
+except TransitionError:
+    _expect(True, "open() from locked raises TransitionError")
+d.unlock()
+_expect(d.state == "closed", "unlock returns to closed")
+_expect(len(d.history) == 4, "invalid attempt does not add to history")''',
+            'solution': 'class TransitionError(Exception):\n    pass\n\ndef transition(from_state, to_state):\n    def decorator(method):\n        def wrapper(self, *args, **kwargs):\n            if self.state != from_state:\n                raise TransitionError(f"{method.__name__}: expected state {from_state!r}, got {self.state!r}")\n            result = method(self, *args, **kwargs)\n            self.history.append((from_state, to_state))\n            self.state = to_state\n            return result\n        return wrapper\n    return decorator\n\nclass Machine:\n    def __init__(self, initial_state):\n        self.state = initial_state\n        self.history = []',
         },
     ],
 }

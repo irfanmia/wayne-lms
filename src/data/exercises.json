@@ -3,7 +3,11 @@
     "slug": "hello-world",
     "trackSlug": "python",
     "name": "Hello World",
-    "difficulty": { "en": "easy", "ar": "سهل", "es": "fácil" },
+    "difficulty": {
+      "en": "easy",
+      "ar": "سهل",
+      "es": "fácil"
+    },
     "difficultyKey": "easy",
     "type": "learning",
     "concept": "basics",
@@ -19,7 +23,11 @@
     "slug": "two-fer",
     "trackSlug": "python",
     "name": "Two Fer",
-    "difficulty": { "en": "easy", "ar": "سهل", "es": "fácil" },
+    "difficulty": {
+      "en": "easy",
+      "ar": "سهل",
+      "es": "fácil"
+    },
     "difficultyKey": "easy",
     "type": "learning",
     "concept": "strings",
@@ -35,7 +43,11 @@
     "slug": "resistor-color",
     "trackSlug": "python",
     "name": "Resistor Color",
-    "difficulty": { "en": "easy", "ar": "سهل", "es": "fácil" },
+    "difficulty": {
+      "en": "easy",
+      "ar": "سهل",
+      "es": "fácil"
+    },
     "difficultyKey": "easy",
     "type": "learning",
     "concept": "lists",
@@ -51,7 +63,11 @@
     "slug": "leap",
     "trackSlug": "python",
     "name": "Leap",
-    "difficulty": { "en": "easy", "ar": "سهل", "es": "fácil" },
+    "difficulty": {
+      "en": "easy",
+      "ar": "سهل",
+      "es": "fácil"
+    },
     "difficultyKey": "easy",
     "type": "practice",
     "concept": "conditionals",
@@ -67,7 +83,11 @@
     "slug": "isogram",
     "trackSlug": "python",
     "name": "Isogram",
-    "difficulty": { "en": "medium", "ar": "متوسط", "es": "medio" },
+    "difficulty": {
+      "en": "medium",
+      "ar": "متوسط",
+      "es": "medio"
+    },
     "difficultyKey": "medium",
     "type": "practice",
     "concept": "strings",
@@ -83,7 +103,11 @@
     "slug": "bob",
     "trackSlug": "python",
     "name": "Bob",
-    "difficulty": { "en": "medium", "ar": "متوسط", "es": "medio" },
+    "difficulty": {
+      "en": "medium",
+      "ar": "متوسط",
+      "es": "medio"
+    },
     "difficultyKey": "medium",
     "type": "practice",
     "concept": "conditionals",
@@ -99,7 +123,11 @@
     "slug": "pangram",
     "trackSlug": "python",
     "name": "Pangram",
-    "difficulty": { "en": "medium", "ar": "متوسط", "es": "medio" },
+    "difficulty": {
+      "en": "medium",
+      "ar": "متوسط",
+      "es": "medio"
+    },
     "difficultyKey": "medium",
     "type": "learning",
     "concept": "sets",
@@ -115,7 +143,11 @@
     "slug": "matrix",
     "trackSlug": "python",
     "name": "Matrix",
-    "difficulty": { "en": "medium", "ar": "متوسط", "es": "medio" },
+    "difficulty": {
+      "en": "medium",
+      "ar": "متوسط",
+      "es": "medio"
+    },
     "difficultyKey": "medium",
     "type": "practice",
     "concept": "lists",
@@ -131,7 +163,11 @@
     "slug": "binary-search",
     "trackSlug": "python",
     "name": "Binary Search",
-    "difficulty": { "en": "hard", "ar": "صعب", "es": "difícil" },
+    "difficulty": {
+      "en": "hard",
+      "ar": "صعب",
+      "es": "difícil"
+    },
     "difficultyKey": "hard",
     "type": "practice",
     "concept": "algorithms",
@@ -147,7 +183,11 @@
     "slug": "linked-list",
     "trackSlug": "python",
     "name": "Linked List",
-    "difficulty": { "en": "hard", "ar": "صعب", "es": "difícil" },
+    "difficulty": {
+      "en": "hard",
+      "ar": "صعب",
+      "es": "difícil"
+    },
     "difficultyKey": "hard",
     "type": "learning",
     "concept": "data-structures",
@@ -163,7 +203,11 @@
     "slug": "hello-world",
     "trackSlug": "javascript",
     "name": "Hello World",
-    "difficulty": { "en": "easy", "ar": "سهل", "es": "fácil" },
+    "difficulty": {
+      "en": "easy",
+      "ar": "سهل",
+      "es": "fácil"
+    },
     "difficultyKey": "easy",
     "type": "learning",
     "concept": "basics",
@@ -179,7 +223,11 @@
     "slug": "lucians-luscious-lasagna",
     "trackSlug": "javascript",
     "name": "Lucian's Luscious Lasagna",
-    "difficulty": { "en": "easy", "ar": "سهل", "es": "fácil" },
+    "difficulty": {
+      "en": "easy",
+      "ar": "سهل",
+      "es": "fácil"
+    },
     "difficultyKey": "easy",
     "type": "learning",
     "concept": "basics",
@@ -190,5 +238,65 @@
     },
     "status": "in-progress",
     "points": 15
+  },
+  {
+    "slug": "inventory-manager",
+    "trackSlug": "python",
+    "name": "Inventory Manager",
+    "difficulty": {
+      "en": "hard",
+      "ar": "صعب",
+      "es": "difícil"
+    },
+    "difficultyKey": "hard",
+    "type": "practice",
+    "concept": "capstone",
+    "description": {
+      "en": "Build a stateful InventoryManager class with custom exceptions, parsing, and serialization.",
+      "ar": "Build a stateful InventoryManager class with custom exceptions, parsing, and serialization.",
+      "es": "Build a stateful InventoryManager class with custom exceptions, parsing, and serialization."
+    },
+    "status": "locked",
+    "points": 50
+  },
+  {
+    "slug": "event-log-aggregator",
+    "trackSlug": "python",
+    "name": "Event Log Aggregator",
+    "difficulty": {
+      "en": "hard",
+      "ar": "صعب",
+      "es": "difícil"
+    },
+    "difficultyKey": "hard",
+    "type": "practice",
+    "concept": "capstone",
+    "description": {
+      "en": "Parse log lines with a generator and compute severity counts, top errors, and per-minute buckets.",
+      "ar": "Parse log lines with a generator and compute severity counts, top errors, and per-minute buckets.",
+      "es": "Parse log lines with a generator and compute severity counts, top errors, and per-minute buckets."
+    },
+    "status": "locked",
+    "points": 50
+  },
+  {
+    "slug": "tiny-state-machine",
+    "trackSlug": "python",
+    "name": "Tiny State Machine",
+    "difficulty": {
+      "en": "hard",
+      "ar": "صعب",
+      "es": "difícil"
+    },
+    "difficultyKey": "hard",
+    "type": "practice",
+    "concept": "capstone",
+    "description": {
+      "en": "Design a @transition decorator and Machine base class that enforce valid state transitions and record history.",
+      "ar": "Design a @transition decorator and Machine base class that enforce valid state transitions and record history.",
+      "es": "Design a @transition decorator and Machine base class that enforce valid state transitions and record history."
+    },
+    "status": "locked",
+    "points": 50
   }
 ]
